@@ -24,7 +24,7 @@ import bean.EDbean;
 /**
  * Das Controller Servlet nimmt die Nutzer Eingaben entgegen 
  * und gibt die Eingaben an die Bean zur Bearbeitung der 
- * Sachlogik weiter. Für die Ausgabe wird der Request an
+ * Sachlogik weiter. Fï¿½r die Ausgabe wird der Request an
  * eine geeignete jsp weitergereicht. 
  *
  */
@@ -68,8 +68,8 @@ import bean.EDbean;
 	 * nimmt die Eingaben entgegen, reicht sie an die Bean
 	 * zur Verarbeitung weiter. Zur Erzeugung einer Ausgabe
 	 * werden Request und Response an eine jsp weitergeleitet.
-	 * Jeder Request enthält einen Parameter action, der den 
-	 * Bearbeitungs-Zustand angibt. Die aktuellen Zustände werden
+	 * Jeder Request enthï¿½lt einen Parameter action, der den 
+	 * Bearbeitungs-Zustand angibt. Die aktuellen Zustï¿½nde werden
 	 * in einer Session gespeichert.
 	 * @param request
 	 * @param response
@@ -109,7 +109,7 @@ import bean.EDbean;
 			dispacher.forward(request, response);
 		}
 		else if(action.equals("00_Abmelden")){
-			//Session ungültig setzen
+			//Session ungï¿½ltig setzen
 			session.invalidate();
 			target = "index.jsp";
 			dispacher = request.getRequestDispatcher(target);
@@ -132,6 +132,14 @@ import bean.EDbean;
 			String price = request.getParameter("addIngredientPrice");
 			String unit = request.getParameter("addIngredientUnit");
 			model.addIngredient(name, price, unit);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("05_addPresentIngredient")){
+			String name = request.getParameter("addPresentIngredientName");
+			String percent = request.getParameter("addIngredientPercent");
+			model.addPresentIngredient(name, percent);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
