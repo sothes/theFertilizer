@@ -1,0 +1,39 @@
+%data : SUPPLY set, DEMAND set, INGREDIENT set, purchase_price[INGREDIENT], stock[SUPPLY], demand[DEMAND], a[INGREDIENT, SUPPLY], aMin[INGREDIENT, DEMAND], aMax[INGREDIENT, DEMAND]
+
+
+variables:
+	x[SUPPLY, DEMAND]: real[0..];
+	y[INGREDIENT, DEMAND]: real[0..];
+	z[DEMAND]:	 real;
+
+objectives:
+	sum{i in INGREDIENT, d in DEMAND: purchase_price[i] * y[i, d] } ->min;
+
+constraints:
+	# production
+	{d in DEMAND: 
+		sum{s in SUPPLY: x[s,d] } + sum{i in INGREDIENT: y[i, d] } = z[d];
+	}
+	
+	# demand
+	{d in DEMAND: 
+		z[d] >= demand[d];
+	}
+	
+	# capacity
+	{s in SUPPLY: 
+		sum{d in DEMAND: x[s,d] } <= stock[s];
+	}
+
+	# min mix
+	{i in INGREDIENT, d in DEMAND: 
+		sum{s in SUPPLY: a[i, s] * x[s,d]} + y[i, d] >= aMin[i, d] * z[d];
+	}
+
+	# max mix
+	{i in INGREDIENT, d in DEMAND: 
+		sum{s in SUPPLY: a[i, s] * x[s,d]} + y[i, d] <= aMax[i, d] * z[d];
+	}
+ 
+ 
+ 

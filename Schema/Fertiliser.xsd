@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/Fertiliser" xmlns:tns="http://www.example.org/Fertiliser" elementFormDefault="qualified">
+	<element name="Fertiliser">
+		<complexType>
+			<sequence>
+				<element name="name" type="token" minOccurs="1" maxOccurs="1" />
+				<element name="autor" type="token" minOccurs="1" maxOccurs="1" />
+				<element name="description" type="token" minOccurs="1" maxOccurs="1" />
+				<element ref="tns:ingredients" minOccurs="1" maxOccurs="1" />
+				<element ref="tns:presentFertiliser" minOccurs="1" maxOccurs="unbounded" />
+				<element ref="tns:requiredFertiliser" minOccurs="1" maxOccurs="unbounded" />
+				<element ref="tns:solution" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+			<attribute name="id" type="token" use="required"/>
+			<attribute name="createdAt" type="token" use="optional" />
+			<attribute name="solved" type="boolean" use="required" />
+			<attribute name="solverStatus" type="token" use="optional" />
+		</complexType>
+	</element>
+	
+	<element name="ingredients">
+		<complexType>
+			<sequence>
+				<element ref="tns:ingredient" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="presentIngredients">
+		<complexType>
+			<sequence>
+				<element ref="tns:presentIngredient" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="requiredIngredients">
+		<complexType>
+			<sequence>
+				<element ref="tns:requiredIngredient" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="presentFertiliser">
+		<complexType>
+			<sequence>
+				<element name="name" type="token" minOccurs="1" maxOccurs="1" />
+				<element name="amount" type="double" minOccurs="1" maxOccurs="1" />
+				<element name="unit" type="tns:units" minOccurs="1" maxOccurs="1" />
+				<element ref="tns:presentIngredients" minOccurs="1" maxOccurs="1" />
+			</sequence>
+			<attribute name="id" type="int" use="required"/>
+		</complexType>
+	</element>
+
+	<element name="requiredFertiliser">
+		<complexType>
+			<sequence>
+				<element name="name" type="token" minOccurs="1" maxOccurs="1" />
+				<element name="amount" type="double" minOccurs="1" maxOccurs="1" />
+				<element name="unit" type="tns:units" minOccurs="1" maxOccurs="1" />
+				<element ref="tns:requiredIngredients" minOccurs="1" maxOccurs="1" />
+			</sequence>
+			<attribute name="id" type="int" use="required"/>
+		</complexType>
+	</element>
+
+
+
+
+	<element name="presentIngredient">
+		<complexType>
+			<sequence>
+				<element name="ingredientId" type="int" minOccurs="1" maxOccurs="1" />
+				<element name="percent" type="double" minOccurs="1" maxOccurs="1" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="requiredIngredient">
+		<complexType>
+			<sequence>
+				<element name="ingredientId" type="int" minOccurs="1" maxOccurs="1" />
+				<element name="percentMin" type="double" minOccurs="1" maxOccurs="1" />
+				<element name="percentMax" type="double" minOccurs="1" maxOccurs="1" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="ingredient">
+		<complexType>
+			<sequence>
+				<element name="name" type="token" minOccurs="1" maxOccurs="1" />
+				<element name="unit" type="tns:units" minOccurs="1" maxOccurs="1" />
+				<element name="price" type="double" minOccurs="1" maxOccurs="1" />
+			</sequence>
+			<attribute name="id" type="int" use="required"/>
+			<attribute name="active" type="boolean" use="optional" default="true"/>
+		</complexType>
+	</element>
+	
+	
+	<element name="solution">
+		<complexType>
+			<sequence>
+				<element name="cost" type="double" minOccurs="0" maxOccurs="1" />
+				<element ref="tns:production" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+			<attribute name="solved" type="boolean" use="required"/>
+			<attribute name="solvedAt" type="token" use="optional"/>
+			<attribute name="optimal" type="boolean" use="optional"/>
+			<attribute name="status" type="token" use="optional"/>
+		</complexType>
+	</element>
+	
+	<element name="production">
+		<complexType>
+			<sequence>
+				<element ref="tns:usedFertiliser" minOccurs="1" maxOccurs="unbounded"/>
+				<element ref="tns:usedIngredient" minOccurs="1" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="requiredFertillser_id" type="int" use="required"/>
+			<attribute name="amount" type="double" use="required"/>
+		</complexType>
+	</element>
+	
+	<element name="usedFertiliser">
+		<complexType>
+			<attribute name="presentFertillserId_id" type="int" use="required"/>
+			<attribute name="quantity" type="double" use="required"/>
+		</complexType>
+	</element>
+
+	<element name="usedIngredient">
+		<complexType>
+			<attribute name="ingredientId_id" type="int" use="required"/>
+			<attribute name="quantity" type="double" use="required"/>
+		</complexType>
+	</element>
+
+	<simpleType name="units">
+		<restriction base="token">
+			<enumeration value="Tonnen" />
+			<enumeration value="KG" />
+		</restriction>
+	</simpleType>
+</schema>

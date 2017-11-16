@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Fertiliser xmlns="http://www.example.org/Fertiliser" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="cm1" createdAt="Dec 1, 2015 2:56:41 PM" solved="true" solverStatus="SOLVER_OK" xsi:noNamespaceSchemaLocation="Schema.xsd">
+    <name>cm1</name>
+    <autor>Christian Müller</autor>
+    <description>Mischdünger</description>
+    <ingredients>
+        <ingredient id="0">
+            <name>Nitrat</name>
+            <unit>Tonnen</unit>
+            <price>450.0</price>
+        </ingredient>
+        <ingredient id="1">
+            <name>Phosphat</name>
+            <unit>Tonnen</unit>
+            <price>300.0</price>
+        </ingredient>
+        <ingredient id="2">
+            <name>Torf</name>
+            <unit>Tonnen</unit>
+            <price>80.0</price>
+        </ingredient>
+        <ingredient id="3">
+            <name>ssss</name>
+            <unit>Tonnen</unit>
+            <price>3.0</price>
+        </ingredient>
+    </ingredients>
+    <presentFertiliser id="0">
+        <name>Duenger1</name>
+        <amount>20.0</amount>
+        <unit>Tonnen</unit>
+        <presentIngredients>
+            <presentIngredient>
+                <ingredientId>0</ingredientId>
+                <percent>15.0</percent>
+            </presentIngredient>
+            <presentIngredient>
+                <ingredientId>1</ingredientId>
+                <percent>30.0</percent>
+            </presentIngredient>
+            <presentIngredient>
+                <ingredientId>2</ingredientId>
+                <percent>55.0</percent>
+            </presentIngredient>
+        </presentIngredients>
+    </presentFertiliser>
+    <presentFertiliser id="1">
+        <name>Duenger2</name>
+        <amount>20.0</amount>
+        <unit>Tonnen</unit>
+        <presentIngredients>
+            <presentIngredient>
+                <ingredientId>0</ingredientId>
+                <percent>25.0</percent>
+            </presentIngredient>
+            <presentIngredient>
+                <ingredientId>1</ingredientId>
+                <percent>10.0</percent>
+            </presentIngredient>
+            <presentIngredient>
+                <ingredientId>2</ingredientId>
+                <percent>65.0</percent>
+            </presentIngredient>
+        </presentIngredients>
+    </presentFertiliser>
+    <requiredFertiliser id="0">
+        <name>Duenger3</name>
+        <amount>10.0</amount>
+        <unit>Tonnen</unit>
+        <requiredIngredients>
+            <requiredIngredient>
+                <ingredientId>0</ingredientId>
+                <percentMin>20.0</percentMin>
+                <percentMax>25.0</percentMax>
+            </requiredIngredient>
+            <requiredIngredient>
+                <ingredientId>1</ingredientId>
+                <percentMin>15.0</percentMin>
+                <percentMax>20.0</percentMax>
+            </requiredIngredient>
+            <requiredIngredient>
+                <ingredientId>2</ingredientId>
+                <percentMin>0.0</percentMin>
+                <percentMax>100.0</percentMax>
+            </requiredIngredient>
+        </requiredIngredients>
+    </requiredFertiliser>
+    <requiredFertiliser id="1">
+        <name>Duenger4</name>
+        <amount>25.0</amount>
+        <unit>Tonnen</unit>
+        <requiredIngredients>
+            <requiredIngredient>
+                <ingredientId>0</ingredientId>
+                <percentMin>25.0</percentMin>
+                <percentMax>30.0</percentMax>
+            </requiredIngredient>
+            <requiredIngredient>
+                <ingredientId>1</ingredientId>
+                <percentMin>10.0</percentMin>
+                <percentMax>15.0</percentMax>
+            </requiredIngredient>
+            <requiredIngredient>
+                <ingredientId>2</ingredientId>
+                <percentMin>0.0</percentMin>
+                <percentMax>100.0</percentMax>
+            </requiredIngredient>
+        </requiredIngredients>
+    </requiredFertiliser>
+    <solution solved="true" solvedAt="Dec 4, 2015  3:24:13 PM" optimal="true" status="optimal">
+        <cost>708.75</cost>
+        <production requiredFertillser_id="0" amount="10.0">
+            <usedFertiliser presentFertillserId_id="0" quantity="5.0"/>
+            <usedFertiliser presentFertillserId_id="1" quantity="5.0"/>
+            <usedIngredient ingredientId_id="0" quantity="0.0"/>
+            <usedIngredient ingredientId_id="1" quantity="0.0"/>
+            <usedIngredient ingredientId_id="2" quantity="0.0"/>
+            <usedIngredient ingredientId_id="3" quantity="0.0"/>
+        </production>
+        <production requiredFertillser_id="1" amount="25.0">
+            <usedFertiliser presentFertillserId_id="0" quantity="7.5"/>
+            <usedFertiliser presentFertillserId_id="1" quantity="15.0"/>
+            <usedIngredient ingredientId_id="0" quantity="1.375"/>
+            <usedIngredient ingredientId_id="1" quantity="0.0"/>
+            <usedIngredient ingredientId_id="2" quantity="1.125"/>
+            <usedIngredient ingredientId_id="3" quantity="0.0"/>
+        </production>
+    </solution>
+</Fertiliser>
