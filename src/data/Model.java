@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -45,7 +47,7 @@ public class Model {
 	static Logger logger = Logger.getLogger(Model.class);
 
 	/**
-	 * Die relative Wurzel für die Modelldateien
+	 * Die relative Wurzel fï¿½r die Modelldateien
 	 */
 	static String basisPfad = null;
 	/**
@@ -104,7 +106,7 @@ public class Model {
 	}
 	
 	/**
-	 * fügt neues Modell mit modelId der Hashtable hinzu
+	 * fï¿½gt neues Modell mit modelId der Hashtable hinzu
 	 * @param modelId
 	 * @param model
 	 */
@@ -146,7 +148,7 @@ public class Model {
 
 	
 	/**
-	 * information über alle erstellten Modelle
+	 * information ï¿½ber alle erstellten Modelle
 	 * @return
 	 */
 	public static String info(){
@@ -161,6 +163,7 @@ public class Model {
 	
 	/**
 	 * Konstruktor zum Einlesen einer als xml-Datei abgespeicherten Modells
+	 * 
 	 * @param modelFile	File in dem das Model gespeichert ist
 	 */
 	public Model(File modelFile){
@@ -188,9 +191,16 @@ public class Model {
 	
 	/**
 	 * Konstruktor zum Anlegen eines neuen Modells. 
+	 * 
 	 * @param mid				ModellId
 	 * @param anzVariables
 	 * @param anzConstraints
+	 */
+	/**
+	 * @param mid
+	 */
+	/**
+	 * @param mid
 	 */
 	public Model(String mid){
 		this.datei = mid+".xml";
@@ -213,121 +223,64 @@ public class Model {
 		this.modelData.setId(mid);
 		this.modelData.setName(mid);
 		this.modelData.setCreatedAt(this.getTime());
-		this.modelData.setAutor("Christian Müller");
-		this.modelData.setDescription("Mischdünger");
+		this.modelData.setAutor("Eddi Miller");
+		this.modelData.setDescription("Mischduenger");
 		this.modelData.setSolved(false);
 		this.modelData.setSolverStatus("unsolved");
 		this.modelData.setIngredients(factory.createIngredients());
 		
-		ingredient = factory.createIngredient();
-		ingredient.setId(0);
-		ingredient.setName("Nitrat");
-		ingredient.setUnit(Units.TONNEN);
-		ingredient.setPrice(450.0);
-		this.modelData.getIngredients().getIngredient().add(ingredient);
-		ingredient = factory.createIngredient();
-		ingredient.setId(1);
-		ingredient.setName("Phosphat");
-		ingredient.setUnit(Units.TONNEN);
-		ingredient.setPrice(300.0);
-		this.modelData.getIngredients().getIngredient().add(ingredient);
-		ingredient = factory.createIngredient();
-		ingredient.setId(2);
-		ingredient.setName("Torf");
-		ingredient.setUnit(Units.TONNEN);
-		ingredient.setPrice(80.0);
-		this.modelData.getIngredients().getIngredient().add(ingredient);
+		//Standard Zutaten
+		ArrayList<Ingredient> ingredients = new ArrayList<>();
+		ingredients.add(createIngredient(0, "Nitrat", 450.0, Units.TONNEN));
+		ingredients.add(createIngredient(1, "Phosphat", 300.0, Units.TONNEN));
+		ingredients.add(createIngredient(2, "Torf", 80.0, Units.TONNEN));
 		
+		Iterator<Ingredient> iter = ingredients.iterator();
+		while (iter.hasNext()){
+			this.modelData.getIngredients().getIngredient().add(iter.next());
+		}
 		
-		presentFertiliser = factory.createPresentFertiliser();
-		presentFertiliser.setId(0);
-		presentFertiliser.setName("Duenger1");
-		presentFertiliser.setAmount(20.0);
-		presentFertiliser.setUnit(Units.TONNEN);
-		presentFertiliser.setPresentIngredients(factory.createPresentIngredients());
-		presentIngredient = factory.createPresentIngredient();
-		presentIngredient.setIngredientId(0);
-		presentIngredient.setPercent(15.0);
-		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
-		presentIngredient = factory.createPresentIngredient();
-		presentIngredient.setIngredientId(1);
-		presentIngredient.setPercent(30.0);
-		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
-		presentIngredient = factory.createPresentIngredient();
-		presentIngredient.setIngredientId(2);
-		presentIngredient.setPercent(55.0);
-		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
-		this.modelData.getPresentFertiliser().add(presentFertiliser);
+		ArrayList<PresentIngredient> presentIngredients1 = new ArrayList<>();
+		ArrayList<PresentIngredient> presentIngredients2 = new ArrayList<>();
 		
-		presentFertiliser = factory.createPresentFertiliser();
-		presentFertiliser.setId(1);
-		presentFertiliser.setName("Duenger2");
-		presentFertiliser.setAmount(20.0);
-		presentFertiliser.setUnit(Units.TONNEN);
-		presentFertiliser.setPresentIngredients(factory.createPresentIngredients());
-		presentIngredient = factory.createPresentIngredient();
-		presentIngredient.setIngredientId(0);
-		presentIngredient.setPercent(25.0);
-		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
-		presentIngredient = factory.createPresentIngredient();
-		presentIngredient.setIngredientId(1);
-		presentIngredient.setPercent(10.0);
-		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
-		presentIngredient = factory.createPresentIngredient();
-		presentIngredient.setIngredientId(2);
-		presentIngredient.setPercent(65.0);
-		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
-		this.modelData.getPresentFertiliser().add(presentFertiliser);
-
-		requiredFertiliser = factory.createRequiredFertiliser();
-		requiredFertiliser.setId(0);
-		requiredFertiliser.setName("Duenger3");
-		requiredFertiliser.setAmount(10.0);
-		requiredFertiliser.setUnit(Units.TONNEN);
-		requiredFertiliser.setRequiredIngredients(factory.createRequiredIngredients());
-		requiredIngredient = factory.createRequiredIngredient();
-		requiredIngredient.setIngredientId(0);
-		requiredIngredient.setPercentMin(20.0);
-		requiredIngredient.setPercentMax(25.0);
-		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
-		requiredIngredient = factory.createRequiredIngredient();
-		requiredIngredient.setIngredientId(1);
-		requiredIngredient.setPercentMin(15.0);
-		requiredIngredient.setPercentMax(20.0);
-		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
-		requiredIngredient = factory.createRequiredIngredient();
-		requiredIngredient.setIngredientId(2);
-		requiredIngredient.setPercentMin(0.0);
-		requiredIngredient.setPercentMax(100.0);
-		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
-		this.modelData.getRequiredFertiliser().add(requiredFertiliser);
-
-		requiredFertiliser = factory.createRequiredFertiliser();
-		requiredFertiliser.setId(1);
-		requiredFertiliser.setName("Duenger4");
-		requiredFertiliser.setAmount(25.0);
-		requiredFertiliser.setUnit(Units.TONNEN);
-		requiredFertiliser.setRequiredIngredients(factory.createRequiredIngredients());
-		requiredIngredient = factory.createRequiredIngredient();
-		requiredIngredient.setIngredientId(0);
-		requiredIngredient.setPercentMin(25.0);
-		requiredIngredient.setPercentMax(30.0);
-		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
-		requiredIngredient = factory.createRequiredIngredient();
-		requiredIngredient.setIngredientId(1);
-		requiredIngredient.setPercentMin(10.0);
-		requiredIngredient.setPercentMax(15.0);
-		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
-		requiredIngredient = factory.createRequiredIngredient();
-		requiredIngredient.setIngredientId(2);
-		requiredIngredient.setPercentMin(0.0);
-		requiredIngredient.setPercentMax(100.0);
-		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
-		this.modelData.getRequiredFertiliser().add(requiredFertiliser);
+		presentIngredients1.add(createPresentIngredient(0,15.0));
+		presentIngredients1.add(createPresentIngredient(1,30.0));
+		presentIngredients1.add(createPresentIngredient(2,55.0));
+		
+		presentIngredients2.add(createPresentIngredient(0,25.0));
+		presentIngredients2.add(createPresentIngredient(1,10.0));
+		presentIngredients2.add(createPresentIngredient(2,65.0));
+		
+		addPresentFertiliser(0, "Duenger1", 20.0, Units.TONNEN, presentIngredients1);
+		addPresentFertiliser(1, "Duenger2", 20.0, Units.TONNEN, presentIngredients2);
+	
+		
+		ArrayList<RequiredIngredient> requiredIngredients1 = new ArrayList<>();
+		ArrayList<RequiredIngredient> requiredIngredients2 = new ArrayList<>();
+		
+		requiredIngredients1.add(createRequiredIngredient(0, 20.0, 25.0));
+		requiredIngredients1.add(createRequiredIngredient(1, 15.0, 20.0));
+		requiredIngredients1.add(createRequiredIngredient(2, 0.0, 100.0));
+		
+		requiredIngredients2.add(createRequiredIngredient(0, 25.0, 30.0));
+		requiredIngredients2.add(createRequiredIngredient(1, 10.0, 15.0));
+		requiredIngredients2.add(createRequiredIngredient(2, 0.0, 100.0));
+		
+		addRequiredFertiliser(0, "Duenger3", 10, Units.TONNEN, requiredIngredients1);
+		addRequiredFertiliser(1, "Duenger4", 25, Units.TONNEN, requiredIngredients2);
 	}
 	
+	/**
+	 * ErmÃ¶glicht das Anleben von neuen Ingredients
+	 * 
+	 * @param id
+	 * @param name
+	 * @param price
+	 * @param unit
+	 */
 	public void addIngredient(int id, String name, double price, Units unit){
 		Ingredient 	ingredient;
+		
 		ingredient = factory.createIngredient();
 		ingredient.setId(id);
 		ingredient.setName(name);
@@ -335,6 +288,167 @@ public class Model {
 		ingredient.setPrice(price);
 		this.modelData.getIngredients().getIngredient().add(ingredient);
 	}
+	
+	/**
+	 * Erstellt ein Element vom Typ Ingredient, welches zurÃ¼ck gegeben wird.
+	 * 
+	 * @param id
+	 * @param name
+	 * @param price
+	 * @param unit
+	 * @return
+	 */
+	public Ingredient createIngredient(int id, String name, double price, Units unit){
+		Ingredient ingredient;
+		
+		ingredient = factory.createIngredient();
+		ingredient.setId(id);
+		ingredient.setName(name);
+		ingredient.setUnit(unit);
+		ingredient.setPrice(price);
+		return ingredient;
+	}
+	
+	/**
+	 * Erstellt ein PresentIngredient und Speichert es unter dem mitgegebendem PresentFertiliser
+	 * 
+	 * @param presentFertiliser
+	 * @param id
+	 * @param percent
+	 */
+	public void addPresentIngredient(PresentFertiliser presentFertiliser, int id, double percent){
+		PresentIngredient	presentIngredient;
+		
+		presentIngredient = factory.createPresentIngredient();
+		presentIngredient.setIngredientId(id);
+		presentIngredient.setPercent(percent);
+		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
+	}
+	
+	public PresentFertiliser getPresentFertiliser(int id){
+		PresentFertiliser presentFertiliser;
+		
+		presentFertiliser = this.modelData.getPresentFertiliser().get(id);
+		
+		return presentFertiliser;
+	}
+	
+	public void addPresentIngredient(int pFertiliserId, int id, double percent){
+		PresentIngredient pi = createPresentIngredient(id, percent);
+		PresentFertiliser pf = getPresentFertiliser(pFertiliserId);
+		addPresentIngredient(pf, pi);
+	}
+	
+	/**
+	 * Speichert ein PresentIngredient unter dem mitgegebendem PresentFertiliser
+	 * 
+	 * @param presentFertiliser
+	 * @param presentIngredient
+	 */
+ 	public void addPresentIngredient(PresentFertiliser presentFertiliser, PresentIngredient presentIngredient){
+		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
+	}
+	
+	/**
+	 * Die Funktion erstellt PresentIngredients, um die im Anschluss in einem Array zu speichern
+	 * und einem PresentFertiliser zuordnen kann.
+	 * 
+	 * @param id
+	 * @param percent
+	 * @return
+	 */
+	public PresentIngredient createPresentIngredient(int id, double percent){
+		PresentIngredient	presentIngredient;
+		
+		presentIngredient = factory.createPresentIngredient();
+		presentIngredient.setIngredientId(id);
+		presentIngredient.setPercent(percent);
+		return presentIngredient;
+	}
+	
+	
+	/**
+	 * Speichert ein RequiredIngredient unter dem mitgegebendem RequiredFertiliser
+	 * 
+	 * @param requiredFertiliser
+	 * @param requiredIngredient
+	 */
+	public void addRequiredIngredient(RequiredFertiliser requiredFertiliser, RequiredIngredient requiredIngredient){
+		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
+	}
+	
+	/**
+	 * Erstellt ein RequiredIngredient und gibt es als RÃ¼ckgabewert zurÃ¼ck.
+	 * 
+	 * @param id
+	 * @param minPercent
+	 * @param maxPercent
+	 * @return
+	 */
+	public RequiredIngredient createRequiredIngredient(int id, double minPercent, double maxPercent){
+		RequiredIngredient requiredIngredient;
+		
+		requiredIngredient = factory.createRequiredIngredient();
+		requiredIngredient.setIngredientId(id);
+		requiredIngredient.setPercentMin(minPercent);
+		requiredIngredient.setPercentMax(maxPercent);
+		return requiredIngredient;
+	}
+	
+	/**
+	 * Erstellt ein PresentFertiliser und speichert alle im zugeordneten PresentIngredients ab.
+	 * 
+	 * @param id
+	 * @param name
+	 * @param amount
+	 * @param unit
+	 * @param presentIngredients
+	 */
+	public void addPresentFertiliser(int id, String name, double amount, Units unit, ArrayList<PresentIngredient> presentIngredients){
+		PresentFertiliser presentFertiliser;
+		
+		presentFertiliser = factory.createPresentFertiliser();
+		presentFertiliser.setId(id);
+		presentFertiliser.setName(name);
+		presentFertiliser.setAmount(amount);
+		presentFertiliser.setUnit(unit);
+		presentFertiliser.setPresentIngredients(factory.createPresentIngredients());
+		
+		Iterator<PresentIngredient> iter = presentIngredients.iterator();
+		while(iter.hasNext()){
+			addPresentIngredient(presentFertiliser, iter.next());
+		}
+		
+		this.modelData.getPresentFertiliser().add(presentFertiliser);
+	}
+	
+	/**
+	 * Erstellt ein RequiredFertiliser und speichert im zugeordnete RequiredIngredients ab.
+	 * 
+	 * @param id
+	 * @param name
+	 * @param amount
+	 * @param unit
+	 * @param requiredIngredients
+	 */
+	public void addRequiredFertiliser(int id, String name, double amount, Units unit, ArrayList<RequiredIngredient> requiredIngredients){
+		RequiredFertiliser requiredFertiliser;
+		
+		requiredFertiliser = factory.createRequiredFertiliser();
+		requiredFertiliser.setId(id);
+		requiredFertiliser.setName(name);
+		requiredFertiliser.setAmount(amount);
+		requiredFertiliser.setUnit(unit);
+		requiredFertiliser.setRequiredIngredients(factory.createRequiredIngredients());
+		
+		Iterator<RequiredIngredient> iter = requiredIngredients.iterator();
+		while(iter.hasNext()){
+			addRequiredIngredient(requiredFertiliser, iter.next());
+		}
+		
+		this.modelData.getRequiredFertiliser().add(requiredFertiliser);
+	}
+	
 	
 	/**
 	 * zu Test Zwecken
@@ -351,6 +465,7 @@ public class Model {
 	
 	/**
 	 * liefert das Verzeichnis, in der die Modelle liegen
+	 * 
 	 * 	 * @return
 	 */
 	public String getDirectory(){
@@ -360,6 +475,7 @@ public class Model {
 	
 	/**
 	 * liefert Id des Modelles
+	 * 
 	 * @return
 	 */
 	public String getId(){
@@ -368,6 +484,7 @@ public class Model {
 	
 	/**
 	 * liefert die xmlDaten
+	 * 
 	 * @return
 	 */
 	public Fertiliser getModelData(){
@@ -377,6 +494,7 @@ public class Model {
 	/**
 	 * gibt doc in this.datei aus
 	 * schreibt ins Dateisystem
+	 * 
 	 * @return			  true wenn alles ok
 	 */
 	public boolean printDoc(){
@@ -398,6 +516,7 @@ public class Model {
 	
 	/**
 	 * gibt die aktuelle Zeit als String
+	 * 
 	 * @return
 	 */
 	public String getTime(){
