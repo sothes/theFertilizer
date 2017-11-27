@@ -271,7 +271,7 @@ public class Model {
 	}
 	
 	/**
-	 * Ermöglicht das Anleben von neuen Ingredients
+	 * Ermöglicht das Anlegen von neuen Ingredients
 	 * 
 	 * @param id
 	 * @param name
@@ -287,6 +287,11 @@ public class Model {
 		ingredient.setUnit(unit);
 		ingredient.setPrice(price);
 		this.modelData.getIngredients().getIngredient().add(ingredient);
+	}
+	
+	public void changeIngredient(Ingredient ingredient, double price, Units unit){
+		ingredient.setPrice(price);
+		ingredient.setUnit(unit);
 	}
 	
 	/**
@@ -310,7 +315,23 @@ public class Model {
 	}
 	
 	/**
-	 * Erstellt ein PresentIngredient und Speichert es unter dem mitgegebendem PresentFertiliser
+	 * Ermittelt die Ingredient anhand der Id
+	 * 
+	 * @param id
+	 * @return
+	 * 
+	 * Autor: Edgar M.
+	 */
+	public Ingredient getIngredient(int id){
+		Ingredient ingredient;
+		
+		ingredient = this.modelData.getIngredients().getIngredient().get(id);
+		
+		return ingredient;
+	}
+	
+	/**
+	 * Erstellt ein PresentIngredient und Speichert es unter dem mitgegebenden PresentFertiliser
 	 * 
 	 * @param presentFertiliser
 	 * @param id
@@ -327,10 +348,22 @@ public class Model {
 	
 	public PresentFertiliser getPresentFertiliser(int id){
 		PresentFertiliser presentFertiliser;
-		
 		presentFertiliser = this.modelData.getPresentFertiliser().get(id);
-		
 		return presentFertiliser;
+	}
+	
+	/**
+	 * Ermittelt anhand der Id den PresentIngredient eines PresentFertiliser
+	 * 
+	 * @param presentFertiliser
+	 * @param presentIngredientId
+	 * @return
+	 */
+	public PresentIngredient getPresentIngredient(PresentFertiliser presentFertiliser, int presentIngredientId){
+		PresentIngredient presentIngredient;
+		int fId = presentFertiliser.getId();
+		presentIngredient = this.modelData.getPresentFertiliser().get(fId).getPresentIngredients().getPresentIngredient().get(presentIngredientId);
+		return presentIngredient;
 	}
 	
 	public void addPresentIngredient(int pFertiliserId, int id, double percent){
@@ -364,6 +397,19 @@ public class Model {
 		presentIngredient.setIngredientId(id);
 		presentIngredient.setPercent(percent);
 		return presentIngredient;
+	}
+	
+	public void changePresentIngredient(int presentFertiliserId, int IngredientId, double percent){
+		PresentFertiliser presentFertiliser = getPresentFertiliser(presentFertiliserId);
+		changePresentIngredient(presentFertiliser, IngredientId, percent);
+	}
+	
+	public void changePresentIngredient(PresentFertiliser presentFertiliser, int ingredientId, double percent){
+		PresentIngredient	presentIngredient;
+		
+		presentIngredient = getPresentIngredient(presentFertiliser, ingredientId);
+		presentIngredient.setPercent(percent);
+		System.out.println("Der PresentIngredient wurde verändert.");
 	}
 	
 	
