@@ -57,10 +57,10 @@ public class EDbean implements Serializable{
 	/**
 	 * Absoluter Verzeichnisname des Verzeichnisses in dem die ModellDateien gespeichert werden
 	 */
-	public static final String ModelDir 	= "/Users/Max/Documents/workspace/Fertilizer_0.1/testDir/";
+	public static final String ModelDir 	= "/Users/Max/Documents/workspace/Fertiliser_0.2/testDir/";
 	//public static final String ModelDir 		= "/home/mitarbeiter/cmueller/or_model/Fertilizer/";
 
-	public static final String CmplModel 		= "/Users/Max/Documents/workspace/Fertilizer_0.1/cmpl/Fertilizer.cmpl";
+	public static final String CmplModel 		= "/Users/Max/Documents/workspace/Fertiliser_0.2/cmpl/Fertilizer.cmpl";
 	//public static final String CmplModel 		= "/Users/Max/Documents/workspace/Fertilizer_0.1/cmpl/Fertilizer.cmpl";
 
 	/**
@@ -79,7 +79,25 @@ public class EDbean implements Serializable{
 	public static String parameterFile = "";
 	
 	static Logger logger = Logger.getLogger(EDbean.class);
-
+	
+	/**
+	 * Dieses Attribut ist für die Bearbeitung von vorhandenen Ingredients da.
+	 * 
+	 * Erstellt von: Edgar M.
+	 */
+	private int ChangeIngredientId = -1;
+	
+	/**
+	 * Dieses Attribut ist für die Bearbeitung von vorhandenen PresentIngredients da.
+	 * 
+	 */
+	private int ChangePresentIngredientId = -1;
+	
+	/**
+	 * Dieses Attribut ist für die Bearbeitung von vorhandenen Fertilisers da.
+	 * 
+	 */
+	private int ChangePresentFertiliserId = -1;
 	
 	/**
 	 * Name des aktuellen Nutzers
@@ -158,7 +176,6 @@ public class EDbean implements Serializable{
 	//Noch nicht perfekt!!
 	public int getNrZutaten(String name){
 		int result = 0;
-		
 		for (int i=0; i<getNrZutaten();i++){
 			System.out.println(i);
 			if (this.modelData.getIngredients().getIngredient().get(i).getName().equals(name)){
@@ -181,6 +198,26 @@ public class EDbean implements Serializable{
 		return this.modelData.getSolution().size();
 	}
 	
+	public void setChangePresentIngredientId(String sId){
+		int id = Integer.parseInt(sId);
+		this.ChangePresentIngredientId = id;
+		System.out.println("ChangePresentIngredientId hat den wert von: "+id);
+	}
+	
+	public int getChangePresentIngredientId(){
+		return ChangePresentIngredientId;
+	}
+	
+	public void setChangePresentFertiliser(String sId){
+		int id = Integer.parseInt(sId);
+		this.ChangePresentFertiliserId = id;
+		System.out.println("ChangePresentFertiliser hat einen Wert von: " + id);
+	}
+	
+	public int getChangePresentFeritliser(){
+		return this.ChangePresentFertiliserId;
+	}
+	
 	public void addIngredient(String name, String price, String unit){
 		int id = this.getNrZutaten();
 		try{
@@ -191,16 +228,107 @@ public class EDbean implements Serializable{
 		}
 	}
 	
-	public void addPresentIngredient(String name, String percent){
-		int id = this.getNrZutaten(name);
-		System.out.println(id);
+	public void changeIngredient(String ingId, String price, String unit){
 		try{
+			int ingredientId = Integer.parseInt(ingId);
+			double p = Double.parseDouble(price);
+			this.model.changeIngredient(this.model.getIngredient(ingredientId), p, Units.valueOf(unit.toUpperCase()));
+			
+		}catch(NumberFormatException e){
+			this.model.changeIngredient(this.model.getIngredient(0), 0.0, Units.valueOf(unit.toUpperCase()));
+		}
+	}
+	
+	public void addPresentIngredient(String fId, String name, String percent){
+		int presentIngredientId = this.getNrZutaten(name);
+		System.out.println("Die PresentFertiliserId " + fId);
+		System.out.println("Die Id der Zutat " + presentIngredientId);
+		try{
+			int presentFertiliserId = Integer.parseInt(fId);
 			double p = Double.parseDouble(percent);
-			this.model.addPresentIngredient(0, id, p);
+			this.aktualisierePercent(presentFertiliserId, presentIngredientId, p);
+			this.model.addPresentIngredient(presentFertiliserId, presentIngredientId, p);
 			System.out.println("Es wurde ein PresentIngredient angelegt");
 		}catch(NumberFormatException e){
 			this.model.addPresentIngredient(0, 0, 0.0);
 		}
+	}
+	
+	public void changePresentIngredient(String fId, String s_presentIngredientId, String percent){
+		int presentIngredientId = Integer.parseInt(s_presentIngredientId);
+		try{
+			int presentFertiliserId = Integer.parseInt(fId);
+			double p = Double.parseDouble(percent);
+			this.aktualisierePercent(presentFertiliserId, presentIngredientId, p);
+			this.changePresentIngredient(presentFertiliserId, presentIngredientId, p);
+			System.out.println("Es wurde ein PresentIngredient geändert");
+		}catch(NumberFormatException e){
+			System.out.println("Es konnte der PresentIngredient nicht geändert werden");
+		}
+	}
+	
+	public void changePresentIngredient(int fertiliserId, int presentIngredientId, double percent){
+		this.model.changePresentIngredient(fertiliserId, presentIngredientId, percent);
+		
+	}
+	
+	/**
+	 * Diese Funktion Rundet eine double Zahl Kaufmännisch auf die mitgegebene Nachkommastelle.
+	 * 
+	 * @param zahl
+	 * @param stellenNachKomma
+	 * @return
+	 */
+	public double runden(double zahl, int stellenNachKomma){
+		int temp = (int) (zahl * Math.pow(10.0, (double) stellenNachKomma));
+		zahl = (double)(temp);
+		zahl = zahl / Math.pow(10.0, (double) stellenNachKomma);
+		return zahl;
+	}
+	
+	/**
+	 * Diese Funktion aktualisiert die Prozentwerte der vorhandenen PresentIngrediens, wenn der Gesamtwert über 100 % sein sollte.
+	 * Die Prozente werden automatisch angepasst, sodass das gleiche Verhältnis bestehen bleibt.
+	 * 
+	 * @param fId
+	 * @param presentIngredientId
+	 * @param percentOff
+	 * 
+	 * Autor: Eddi M.
+	 */
+	public void aktualisierePercent(int fId, int presentIngredientId, double percent){
+		System.out.println("Die FertiliserId lautet: " + fId);
+		PresentFertiliser fertiliser = this.modelData.getPresentFertiliser().get(fId);
+		double sumPercent = 0.0;
+		for(int j=0; j< fertiliser.getPresentIngredients().getPresentIngredient().size(); j++){
+			if (j != presentIngredientId ){
+				System.out.println("j hat den Wert: " + j + " der Wert von PresentIngredientId ist: " + presentIngredientId);
+				PresentIngredient pi = fertiliser.getPresentIngredients().getPresentIngredient().get(j);
+				sumPercent += pi.getPercent();
+			}
+		}
+		sumPercent += percent;
+		System.out.println("Die Summer der Percent aller Ingredients lautet: " + sumPercent);
+		if (sumPercent > 100){
+			System.out.println("SumPercent: " + sumPercent + " PersentOff: " + percent);
+			for(int j=0; j< fertiliser.getPresentIngredients().getPresentIngredient().size(); j++){
+				if (j != presentIngredientId ){
+					PresentIngredient pi = fertiliser.getPresentIngredients().getPresentIngredient().get(j);
+					
+					double neuPercent = runden((100 - percent) * (pi.getPercent()/(sumPercent - percent)), 2);
+					System.out.println("Der neues Prozentwert beträgt " + neuPercent );
+					changePresentIngredient(fId, j, neuPercent);
+				}
+			}
+		}	
+	}
+	
+	public void setChangeIngredientId(int id){
+		this.ChangeIngredientId = id;
+	}
+	
+	public int getChangeIngredientId(){
+		return this.ChangeIngredientId;
 	}
 	
 	/**
@@ -214,10 +342,37 @@ public class EDbean implements Serializable{
 		out += "<tr><th>Id</th><th>Name</th><th>Preis [&euro;/Einheit]</th><th>Einheit</th></tr>\n";
 		for (int i=0; i< this.getNrZutaten(); i++ ){
 			out += "<tr>";
-			out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getId()+"</td>";
-			out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getName()+"</td>";
-			out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getPrice()+"</td>";
-			out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getUnit()+"</td>";
+			
+			if (i == this.getChangeIngredientId()){
+				out += "<form action=\"Controller\" method=\"post\" />";
+				out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getId()+"</td>";
+				out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getName()+"</td>";
+				out += "<td><input type=\"text\" name=\"addIngredientPrice\" value=\""+this.modelData.getIngredients().getIngredient().get(i).getPrice()+ "\"/></td>";
+				out += "<td><select name=\"addIngredientUnit\" >";
+				for( Units u : Units.values()){
+					if (u.value() == this.modelData.getIngredients().getIngredient().get(i).getUnit().value()){
+						out += "<option selected>"+u.value()+"</option>";
+					}else{
+						out += "<option>"+u.value()+"</option>";
+					}
+				}
+				out += "</select>";
+				out += "<td><input type=\"submit\" value=\"save\" /></td>";
+				out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+this.modelData.getIngredients().getIngredient().get(i).getId()+"\"/>";
+				out += "<input type=\"hidden\" name=\"action\" value=\"07_saveEditIngredient\"/>";
+				out += "</form>";
+			}else{
+				out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getId()+"</td>";
+				out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getName()+"</td>";
+				out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getPrice()+"</td>";
+				out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getUnit()+"</td>";
+				out += "<form action=\"Controller\" method=\"post\" />";
+				out += "</select>";
+				out += "<td><input type=\"submit\" value=\"edit\" /></td>";
+				out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+i+"\"/>";
+				out += "<input type=\"hidden\" name=\"action\" value=\"06_editIngredient\"/>";
+				out += "</form>";
+			}
 			out += "</tr>\n";
 		}
 		out += "<form action=\"Controller\" method=\"post\" />";
@@ -229,7 +384,7 @@ public class EDbean implements Serializable{
 		for( Units u : Units.values()){
 			out += "<option>"+u.value()+"</option>";
 		}
-		out += "<td></select></td>";
+		out += "</select>";
 		out += "<td><input type=\"submit\" value=\"add\" /></td>";
 		out += "<input type=\"hidden\" name=\"action\" value=\"04_addIngredient\"/>";
 		out += "</tr>\n";
@@ -262,7 +417,27 @@ public class EDbean implements Serializable{
 				out += "<tr>";
 				out += "<td>"+pi.getIngredientId()+"</td>";
 				out += "<td>"+this.modelData.getIngredients().getIngredient().get(pi.getIngredientId()).getName()+"</td>";
-				out += "<td>"+pi.getPercent()+"</td>";
+				
+				if (i == this.getChangePresentFeritliser() && j == this.getChangePresentIngredientId()){
+					out += "<form action=\"Controller\" method=\"post\" />";
+					
+					out += "<td><input type=\"text\" name=\"changeIngredientPercent\" value=\""+pi.getPercent()+"\"/></td>";
+					
+					out += "<td><input type=\"submit\" value=\"save\" /></td>";
+					out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+i+"\"/>";
+					out += "<input type=\"hidden\" name=\"presentIngredientId\" value=\""+j+"\"/>";
+					out += "<input type=\"hidden\" name=\"action\" value=\"09_saveEditPresentIngredient\"/>";
+					out += "</form>";
+				}else{
+					out += "<td>"+pi.getPercent()+"</td>";
+					out += "<form action=\"Controller\" method=\"post\" />";
+					out += "</select>";
+					out += "<td><input type=\"submit\" value=\"edit\" /></td>";
+					out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+i+"\"/>";
+					out += "<input type=\"hidden\" name=\"presentIngredientId\" value=\""+j+"\"/>";
+					out += "<input type=\"hidden\" name=\"action\" value=\"08_editPresentIngredient\"/>";
+					out += "</form>";
+				}
 				out += "</tr>\n";
 			}
 			
@@ -283,6 +458,7 @@ public class EDbean implements Serializable{
 			out += "</select></td>";
 			out += "<td><input type=\"text\" name=\"addIngredientPercent\" /></td>";
 			out += "<td><input type=\"submit\" value=\"add\" /></td>";
+			out += "<input type=\"hidden\" name=\"presetFertiliserId\" value=\""+i+"\">";
 			out += "<input type=\"hidden\" name=\"action\" value=\"05_addPresentIngredient\"/>";
 			out += "</tr>\n";
 			out += "</form>";
@@ -296,7 +472,7 @@ public class EDbean implements Serializable{
 	}
 	
 	/**
-	 * liefert HTML String f�r ben�tigte D�nger
+	 * liefert HTML String für benötigte Dünger
 	 * @return
 	 */
 	public String getBenötigteDüngerTableau(){
