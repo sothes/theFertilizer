@@ -137,9 +137,52 @@ import bean.EDbean;
 			dispacher.forward(request, response);
 		}
 		else if(action.equals("05_addPresentIngredient")){
+			String id = request.getParameter("presetFertiliserId");
 			String name = request.getParameter("addPresentIngredientName");
 			String percent = request.getParameter("addIngredientPercent");
-			model.addPresentIngredient(name, percent);
+			model.addPresentIngredient(id , name, percent);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("06_editIngredient")){
+			String ingredientId = request.getParameter("ingredientId");
+			System.out.println(ingredientId);
+			int id = Integer.parseInt(ingredientId);
+			model.setChangeIngredientId(id);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("07_saveEditIngredient")){
+			String ingredientId = request.getParameter("ingredientId");
+			String price = request.getParameter("addIngredientPrice");
+			String unit = request.getParameter("addIngredientUnit");
+			System.out.println("Id: " + ingredientId + " Price: "+ price + " unit: "+ unit);
+			model.changeIngredient(ingredientId, price, unit);
+			model.setChangeIngredientId(-1);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("08_editPresentIngredient")){
+			String fertiliserId = request.getParameter("presentFertiliserId");
+			String ingredientId = request.getParameter("presentIngredientId");
+			System.out.println("FertiliserId: " + fertiliserId + " IngredientId: " + ingredientId);
+			model.setChangePresentIngredientId(ingredientId);
+			model.setChangePresentFertiliser(fertiliserId);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("09_saveEditPresentIngredient")){
+			String fertiliserId = request.getParameter("presentFertiliserId");
+			String ingredientId = request.getParameter("presentIngredientId");
+			String percent = request.getParameter("changeIngredientPercent");
+			System.out.println("FertiliserId: " + fertiliserId + " IngredientId: "+ ingredientId + " Percent: "+ percent);
+			model.changePresentIngredient(fertiliserId, ingredientId, percent);
+			model.setChangePresentIngredientId("-1");
+			model.setChangePresentFertiliser("-1");
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
