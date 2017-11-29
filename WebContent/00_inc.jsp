@@ -3,6 +3,10 @@
 <!-- Start: 00_inc.jsp -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <jsp:useBean id="ed" scope="session" class="bean.EDbean" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" ></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" ></script>
 <table width="100%" border="0">
 <tr valign="middle">
 <th align="left">
@@ -14,8 +18,8 @@ Nutzer: <jsp:getProperty name="ed" property="nutzer" />
 </form>
 </th>
 <th><h2>Fertiliser</h2></th>
-<th align="right">
-<img src="logo.gif" align="top">
+<th>
+<img src="logo.gif" style="float:right;align:top">
 </th>
 </tr>
 </table>
