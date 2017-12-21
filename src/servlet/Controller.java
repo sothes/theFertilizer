@@ -24,7 +24,7 @@ import bean.EDbean;
 /**
  * Das Controller Servlet nimmt die Nutzer Eingaben entgegen 
  * und gibt die Eingaben an die Bean zur Bearbeitung der 
- * Sachlogik weiter. F�r die Ausgabe wird der Request an
+ * Sachlogik weiter. Fuer die Ausgabe wird der Request an
  * eine geeignete jsp weitergereicht. 
  *
  */
@@ -68,8 +68,8 @@ import bean.EDbean;
 	 * nimmt die Eingaben entgegen, reicht sie an die Bean
 	 * zur Verarbeitung weiter. Zur Erzeugung einer Ausgabe
 	 * werden Request und Response an eine jsp weitergeleitet.
-	 * Jeder Request enth�lt einen Parameter action, der den 
-	 * Bearbeitungs-Zustand angibt. Die aktuellen Zust�nde werden
+	 * Jeder Request enthaelt einen Parameter action, der den 
+	 * Bearbeitungs-Zustand angibt. Die aktuellen Zustaende werden
 	 * in einer Session gespeichert.
 	 * @param request
 	 * @param response
@@ -109,7 +109,7 @@ import bean.EDbean;
 			dispacher.forward(request, response);
 		}
 		else if(action.equals("00_Abmelden")){
-			//Session ung�ltig setzen
+
 			session.invalidate();
 			target = "index.jsp";
 			dispacher = request.getRequestDispatcher(target);
@@ -190,21 +190,6 @@ import bean.EDbean;
 		else if(action.equals("10_solveModel")){
 			String modelId = request.getParameter("modelId");
 			model.setModel(modelId);
-			/*
-			String direction = request.getParameter("direction");
-			model.setDirection(direction);
-			String[] nameV = this.getArray(request, "nameV", model.getNrVariables());
-			String[] costV = this.getArray(request, "costV", model.getNrVariables());
-			String[] lwbV  = this.getArray(request, "lwbV",  model.getNrVariables());
-			String[] upbV  = this.getArray(request, "upbV",  model.getNrVariables());
-			model.setVariableData(nameV, costV, lwbV, upbV);
-			String[] nameC  = this.getArray(request, "nameC",  model.getNrConstraints());
-			String[] lwbC  = this.getArray(request,  "lwbC",  model.getNrConstraints());
-			String[] upbC  = this.getArray(request,  "upbC",  model.getNrConstraints());
-			model.setConstraintData(nameC, lwbC, upbC);
-			String[][] coeff = this.getMatrix(request, "coeff", model.getNrConstraints(), model.getNrVariables());
-			model.setCoefficients(coeff);
-			*/
 			model.resetSolution();
 			model.save();
 			model.solve();
@@ -292,8 +277,7 @@ import bean.EDbean;
 		else if(action.equals("28_deletePresentIngredient")){
 			String fertiliserId = request.getParameter("fertiliserId");
 			String ingredientId = request.getParameter("ingredientId");
-			System.out.println("You are going to delete the PresentIngredients: " + ingredientId);
-			//model.setIngredientActive(ingredientId, false);
+			//System.out.println("You are going to delete the PresentIngredients: " + ingredientId);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
