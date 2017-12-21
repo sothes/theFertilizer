@@ -12,8 +12,8 @@ Modell: <jsp:getProperty name="ed" property="modelName" />
 </form>
 <br>
 <jsp:getProperty name="ed" property="zutatenTableau" /><br/>
-<jsp:getProperty name="ed" property="vorhandenDüngerTableau" /><br/>
-<jsp:getProperty name="ed" property="benötigteDüngerTableau" /><br/>
+<jsp:getProperty name="ed" property="vorhandenDuengerTableau" /><br/>
+<jsp:getProperty name="ed" property="benoetigteDuengerTableau" /><br/>
 <jsp:getProperty name="ed" property="solutionTableau" />
 
 <form action="Controller" method="post">
