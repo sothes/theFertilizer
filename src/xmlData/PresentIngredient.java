@@ -1,7 +1,7 @@
 //
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+// ï¿½nderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
 // Generiert: 2015.12.01 um 12:08:33 PM CET 
 //
 
@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java-Klasse fï¿½r anonymous complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="ingredientId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="percent" type="{http://www.w3.org/2001/XMLSchema}double"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="active" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -37,13 +38,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "ingredientId",
-    "percent"
+    "percent",
+    "active"
 })
 @XmlRootElement(name = "presentIngredient")
 public class PresentIngredient {
 
     protected int ingredientId;
     protected double percent;
+    protected Boolean active;
 
     /**
      * Ruft den Wert der ingredientId-Eigenschaft ab.
@@ -75,6 +78,42 @@ public class PresentIngredient {
      */
     public void setPercent(double value) {
         this.percent = value;
+    }
+    
+    /**
+     * Ruft den Wert der active-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isActive() {
+        if (active == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Return the value of active
+     * 
+     */
+    public boolean getActive(){
+    	return this.active;
+    }
+
+    /**
+     * Legt den Wert der active-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setActive(Boolean value) {
+        this.active = value;
     }
 
 }
