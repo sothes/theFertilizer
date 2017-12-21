@@ -225,15 +225,15 @@ public class EDbean implements Serializable{
 	 * 
 	 * @return - Integer als Anzahl der PresentFertiliser.
 	 */
-	public int getNrDüngerVorhanden(){
+	public int getNrDuengerVorhanden(){
 		return this.modelData.getPresentFertiliser().size();
 	}
 	
-	public int getNrDüngerBenötigt(){
+	public int getNrDuengerBenoetigt(){
 		return this.modelData.getRequiredFertiliser().size();
 	}
 	
-	public int getNrLösungen(){
+	public int getNrLoesungen(){
 		return this.modelData.getSolution().size();
 	}
 	
@@ -584,7 +584,7 @@ public class EDbean implements Serializable{
 	 * liefert HTML String für Vorhandenen Dünger
 	 * @return
 	 */
-	public String getVorhandenDüngerTableau(){
+	public String getVorhandenDuengerTableau(){
 		String out = "";
 		out += "<table border=\"1\">\n";
 		if (this.showID == true){
@@ -594,7 +594,7 @@ public class EDbean implements Serializable{
 		}
 		out += "Vorhandene Duenger</th></tr>\n";
 		
-		for (int i=0; i< this.getNrDüngerVorhanden(); i++ ){
+		for (int i=0; i< this.getNrDuengerVorhanden(); i++ ){
 			PresentFertiliser fertiliser = this.modelData.getPresentFertiliser().get(i);
 			if (this.showID == true){
 				out += "<tr><td colspan=\"5\">";
@@ -770,12 +770,12 @@ public class EDbean implements Serializable{
 	 * liefert HTML String für benötigte Dünger
 	 * @return
 	 */
-	public String getBenötigteDüngerTableau(){
+	public String getBenoetigteDuengerTableau(){
 		String out = "";
 		out += "<table border=\"1\">\n";
 		out += "<tr><th colspan=\"4\">Benoetigte Duenger</th></tr>\n";
 		
-		for (int i=0; i< this.getNrDüngerBenötigt(); i++ ){
+		for (int i=0; i< this.getNrDuengerBenoetigt(); i++ ){
 			RequiredFertiliser fertiliser = this.modelData.getRequiredFertiliser().get(i);
 			out += "<tr><td colspan=\"4\">";
 			out += "<b>ID: </b>"+fertiliser.getId()+"<br/>";
@@ -806,7 +806,7 @@ public class EDbean implements Serializable{
 		out += "<tr><th align=\"left\" colspan=\"2\">Solver Status: </th><td colspan=\"1\">"+this.modelData.getSolverStatus()+"</td></tr>\n";
 		
 		if(this.isSolved()){
-			for (int i=0; i< this.getNrLösungen(); i++ ){
+			for (int i=0; i< this.getNrLoesungen(); i++ ){
 				Solution solution = this.modelData.getSolution().get(i);
 				out += "<tr><th align=\"left\" colspan=\"2\">Solution Id: </th><td colspan=\"2\">"+i+"</td></tr>\n";
 				out += "<tr><th align=\"left\" colspan=\"2\">Optimal: </th><td colspan=\"2\">"+solution.isOptimal()+"</td></tr>\n";
@@ -961,16 +961,16 @@ public class EDbean implements Serializable{
 		Cmpl m;
 		CmplSet supplySet, demandSet,ingredientSet;
 		CmplParameter purchase_price, stock, demand, a, aMin, aMax; 
-		String[] supplyName 		= new String[this.getNrDüngerVorhanden()];
-		double[] stockVal 			= new double[this.getNrDüngerVorhanden()];
-		for(int i=0; i<this.getNrDüngerVorhanden(); i++){
+		String[] supplyName 		= new String[this.getNrDuengerVorhanden()];
+		double[] stockVal 			= new double[this.getNrDuengerVorhanden()];
+		for(int i=0; i<this.getNrDuengerVorhanden(); i++){
 			supplyName[i]			= this.modelData.getPresentFertiliser().get(i).getName();
 			stockVal[i]				= this.modelData.getPresentFertiliser().get(i).getAmount();
 		}
 
-		String[] demandName 		= new String[this.getNrDüngerBenötigt()];
-		double[] demandVal 			= new double[this.getNrDüngerBenötigt()];
-		for(int i=0; i<this.getNrDüngerBenötigt(); i++){
+		String[] demandName 		= new String[this.getNrDuengerBenoetigt()];
+		double[] demandVal 			= new double[this.getNrDuengerBenoetigt()];
+		for(int i=0; i<this.getNrDuengerBenoetigt(); i++){
 			demandName[i]			= this.modelData.getRequiredFertiliser().get(i).getName();
 			demandVal[i]			= this.modelData.getRequiredFertiliser().get(i).getAmount();
 		}
@@ -982,8 +982,8 @@ public class EDbean implements Serializable{
 			purchase_priceVal[j]	= this.modelData.getIngredients().getIngredient().get(j).getPrice();
 		}
 		
-		double[][] aVal 			= new double[this.getNrZutaten()][this.getNrDüngerVorhanden()];
-		for(int j=0; j<this.getNrDüngerVorhanden(); j++){
+		double[][] aVal 			= new double[this.getNrZutaten()][this.getNrDuengerVorhanden()];
+		for(int j=0; j<this.getNrDuengerVorhanden(); j++){
 			PresentFertiliser presentFertilizer = this.modelData.getPresentFertiliser().get(j);
 			for(int i=0; i<this.getNrZutaten(); i++) aVal[i][j] = 0.0;
 			for(int i=0; i<presentFertilizer.getPresentIngredients().getPresentIngredient().size(); i++){
@@ -993,9 +993,9 @@ public class EDbean implements Serializable{
 			}
 		}
 
-		double[][] aMinVal 			= new double[this.getNrZutaten()][this.getNrDüngerBenötigt()];
-		double[][] aMaxVal 			= new double[this.getNrZutaten()][this.getNrDüngerBenötigt()];
-		for(int j=0; j<this.getNrDüngerBenötigt(); j++){
+		double[][] aMinVal 			= new double[this.getNrZutaten()][this.getNrDuengerBenoetigt()];
+		double[][] aMaxVal 			= new double[this.getNrZutaten()][this.getNrDuengerBenoetigt()];
+		for(int j=0; j<this.getNrDuengerBenoetigt(); j++){
 			RequiredFertiliser requiredFertilizer = this.modelData.getRequiredFertiliser().get(j);
 			for(int i=0; i<this.getNrZutaten(); i++) {aMinVal[i][j]	= 0.0; aMaxVal[i][j]	= 0.0; }
 			for(int i=0; i< requiredFertilizer.getRequiredIngredients().getRequiredIngredient().size(); i++){
@@ -1064,12 +1064,12 @@ public class EDbean implements Serializable{
 				CmplSolArray z 		= (CmplSolArray) m.getVarByName("z"); 
 				
 				String[] index = new String[2];
-				for(int j=0; j<this.getNrDüngerBenötigt(); j++){
+				for(int j=0; j<this.getNrDuengerBenoetigt(); j++){
 					index[1] = (String)demandSet.get(j);
 					Production production = factory.createProduction();
 					production.setRequiredFertillserId(j);
 					production.setAmount((Double)(z.get(index[1]).activity()));
-					for(int i=0; i<this.getNrDüngerVorhanden(); i++){
+					for(int i=0; i<this.getNrDuengerVorhanden(); i++){
 						index[0] = (String)supplySet.get(i);
 						UsedFertiliser usedFertilizer = factory.createUsedFertiliser();
 						usedFertilizer.setPresentFertillserIdId(i);
