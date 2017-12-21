@@ -75,6 +75,7 @@
 				<element name="ingredientId" type="int" minOccurs="1" maxOccurs="1" />
 				<element name="percent" type="double" minOccurs="1" maxOccurs="1" />
 			</sequence>
+			<attribute name="active" type="boolean" default="true"/>
 		</complexType>
 	</element>
 	
@@ -96,7 +97,7 @@
 				<element name="price" type="double" minOccurs="1" maxOccurs="1" />
 			</sequence>
 			<attribute name="id" type="int" use="required"/>
-			<attribute name="active" type="boolean" use="optional" default="true"/>
+			<attribute name="active" type="boolean" default="true"/>
 		</complexType>
 	</element>
 	
