@@ -148,7 +148,7 @@ public class Model {
 
 	
 	/**
-	 * information �ber alle erstellten Modelle
+	 * information Ueber alle erstellten Modelle
 	 * @return
 	 */
 	public static String info(){
@@ -314,6 +314,14 @@ public class Model {
 		return ingredient;
 	}
 	
+	public void setIngredientActive(Ingredient ingredient, boolean b){
+		ingredient.setActive(b);
+	}
+	
+	public void setPresentIngredientActive(PresentIngredient presentIngredient, boolean b){
+		presentIngredient.setActive(b);
+	}
+	
 	/**
 	 * Ermittelt die Ingredient anhand der Id
 	 * 
@@ -412,6 +420,46 @@ public class Model {
 		System.out.println("Der PresentIngredient wurde verändert.");
 	}
 	
+	/**
+	 * Gibt eine Liste der PresentIngredientId eines PresentFertiliser wieder.
+	 * 
+	 * @param presentFertiliser - Object PresentFertiliser über welchem interiert wird, um die Ids zu erhalten.
+	 * @return - Zurück gegeben wird eine ArrayListe mit allen Ids gespeichert als Integer.
+	 */
+	public ArrayList<Integer> getIdOfPresentIngredientsFromPresentFertiliser(PresentFertiliser presentFertiliser){
+		ArrayList<Integer> listId = new ArrayList<Integer>();
+		
+		for (int i=0; i < presentFertiliser.getPresentIngredients().getPresentIngredient().size(); i++){
+			listId.add(presentFertiliser.getPresentIngredients().getPresentIngredient().get(i).getIngredientId());
+		}
+		return listId;
+	}
+	
+	/**
+	 * Die Funktion getIndexOfPreentIngredientFromIngredientId gibt den Index eines PresentIngredient zurück. Eingabewert sind der PresentFertiliser und die IngredientId.
+	 * 
+	 * @param presentFertiliser - Als Objekt vom Typ PresentFertiliser
+	 * @param ingredientId - Integer
+	 * @return - Zurück gegeben wird die Index des PresentIngredients als vorhanden oder -1 als kein PresentIngredient mit der ID vorhanden ist.
+	 * 
+	 * Autor: Eddi M.
+	 */
+	public int getIndexOfPresentIngredientFromIngredientId(PresentFertiliser presentFertiliser, int ingredientId){
+		ArrayList<Integer> listId = this.getIdOfPresentIngredientsFromPresentFertiliser(presentFertiliser);
+			
+		if (listId.contains(ingredientId) == true){
+			System.out.println("Ingredient: " + ingredientId + " ist nicht in der Liste enthalten.");
+			int index = 0;
+			while (ingredientId != presentFertiliser.getPresentIngredients().getPresentIngredient().get(index).getIngredientId()){
+				index += 1;
+			}
+			System.out.println("Index ist: " + index);
+			return index;
+		}else {
+			return  -1;
+		}
+		
+	}
 	
 	/**
 	 * Speichert ein RequiredIngredient unter dem mitgegebendem RequiredFertiliser
