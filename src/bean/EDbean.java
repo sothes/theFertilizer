@@ -58,10 +58,10 @@ public class EDbean implements Serializable{
 	/**
 	 * Absoluter Verzeichnisname des Verzeichnisses in dem die ModellDateien gespeichert werden
 	 */
-	public static final String ModelDir 	= "/Users/Max/Documents/workspace/Fertiliser_0.2/testDir/";
+	public static final String ModelDir 	= "D:/eclipse-workspace/dyn/testDir/";
 	//public static final String ModelDir 		= "/home/mitarbeiter/cmueller/or_model/Fertilizer/";
 
-	public static final String CmplModel 		= "/Users/Max/Documents/workspace/Fertiliser_0.2/cmpl/Fertilizer.cmpl";
+	public static final String CmplModel 		= "D:/eclipse-workspace/dyn/cmpl/Fertilizer.cmpl";
 	//public static final String CmplModel 		= "/Users/Max/Documents/workspace/Fertilizer_0.1/cmpl/Fertilizer.cmpl";
 
 	/**
@@ -435,7 +435,7 @@ public class EDbean implements Serializable{
 		out += "<th>";
 		if (this.ShowDeletedIngredients == true){
 			out += "<form action=\"Controller\" method=\"post\" />";
-			out += "<input type=\"submit\" value=\"not show deleted\" />";
+			out += "<input type=\"submit\" value=\"dont show deleted\" />";
 			out += "<input type=\"hidden\" name=\"action\" value=\"24_dontshowDeletedIngredients\"/>";
 			out += "</form>";
 		}else {
@@ -448,12 +448,12 @@ public class EDbean implements Serializable{
 		out += "<form action=\"Controller\" method=\"post\" />";
 		if (this.AddIngredient == false){
 			out += "<td>";
-			out += "<input type=\"submit\" value=\"add\" />";
+			out += "<input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add451\" />";
 			out += "</td></tr>\n";
 			out += "<input type=\"hidden\" name=\"action\" value=\"20_showRowAdding\"/>";
 		}else if (this.AddIngredient == true){
 			out += "<td>";
-			out += "<input type=\"submit\" value=\"-^-\" />";
+			out += "<input id=\"image\" type=\"image\" src=\"if_Arrow_Back_1063891.png\" alt=\"back456\" />";
 			out += "</td></tr>\n";
 			out += "<input type=\"hidden\" name=\"action\" value=\"21_NoShowRowAdding\"/>";
 		}
@@ -484,7 +484,7 @@ public class EDbean implements Serializable{
 						}
 					}
 					out += "</select>";
-					out += "<td><input type=\"submit\" value=\"save\" /></td>";
+					out += "<td><input type=\"submit\" value=\"save487\" /></td>";
 					out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+this.modelData.getIngredients().getIngredient().get(i).getId()+"\"/>";
 					out += "<input type=\"hidden\" name=\"action\" value=\"07_saveEditIngredient\"/>";
 					out += "</form>";
@@ -498,7 +498,7 @@ public class EDbean implements Serializable{
 					out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getUnit()+"</td>";
 					out += "<form action=\"Controller\" method=\"post\" />";
 					out += "</select>";
-					out += "<td><input type=\"submit\" value=\"edit\" /></td>";
+					out += "<td><input type=\"image\" src=\"if_Pencil_1021030.png\" alt=\"edit501\" /></td>";
 					out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+i+"\"/>";
 					out += "<input type=\"hidden\" name=\"action\" value=\"06_editIngredient\"/>";
 					out += "</form>";
@@ -526,7 +526,7 @@ public class EDbean implements Serializable{
 		if (this.ShowDeletedIngredients == true && this.modelData.getIngredients().getIngredient().get(ingredientId).getActive() == false){
 			out += "<form action=\"Controller\" method=\"post\" />";
 			out += "<td>";
-			out += "<input type=\"submit\" value=\"HinzufÃ¼gen\" />";
+			out += "<input id=\"image\" type=\"image\" src=\"if_edit-add_9254.png\" alt=\"Hinzufügen529\" />";
 			out += "</td>";
 			out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+ingredientId+"\"/>";
 			out += "<input type=\"hidden\" name=\"action\" value=\"25_undeleteIngredients\" />";
@@ -534,7 +534,7 @@ public class EDbean implements Serializable{
 		}else{
 			out += "<form action=\"Controller\" method=\"post\" />";
 			out += "<td>";
-			out += "<input type=\"submit\" value=\"X\" />";
+			out += "<input id=\"image\" type=\"image\" src=\"if_edit-delete_9259.png\" alt=\"X537\" />";
 			out += "</td>";
 			out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+ingredientId+"\"/>";
 			out += "<input type=\"hidden\" name=\"action\" value=\"22_deleteIngredients\" />";
@@ -570,7 +570,7 @@ public class EDbean implements Serializable{
 			out += "<option>"+u.value()+"</option>";
 		}
 		out += "</select>";
-		out += "<td><input type=\"submit\" value=\"add\" /></td>";
+		out += "<td><input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add473\" /></td>";
 		out += "<input type=\"hidden\" name=\"action\" value=\"04_addIngredient\"/>";
 		out += "</tr>\n";
 		out += "</form>";
@@ -619,11 +619,11 @@ public class EDbean implements Serializable{
 			// Addbutton im Menu
 			out += "<form action=\"Controller\" method=\"post\" />";
 			if (this.AddPresentIngredients[1] == 1 && this.AddPresentIngredients[0] == i){
-				out += "<input type=\"submit\" value=\"-^-\" />";
+				out += "<input id=\"image\" type=\"image\" src=\"if_Arrow_Back_1063891.png\" alt=\"back622\" />";
 				out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
 				out += "<input type=\"hidden\" name=\"action\" value=\"27_NoShowRowPresentIngredientAdding\"/>";
 			}else{
-				out += "<input type=\"submit\" value=\"add\" />";
+				out += "<input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add626\" />";
 				out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
 				out += "<input type=\"hidden\" name=\"action\" value=\"26_showRowPresentIngredientAdding\"/>";
 			}
@@ -668,7 +668,7 @@ public class EDbean implements Serializable{
 							out += "<td>"+pi.getPercent()+"</td>";
 							out += "<form action=\"Controller\" method=\"post\" />";
 							out += "</select>";
-							out += "<td><input type=\"submit\" value=\"edit\" /></td>";
+							out += "<td><input type=\"image\" src=\"if_Pencil_1021030.png\" alt=\"edit671\" /></td>";
 							out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+i+"\"/>";
 							out += "<input type=\"hidden\" name=\"presentIngredientId\" value=\""+index+"\"/>";
 							out += "<input type=\"hidden\" name=\"action\" value=\"08_editPresentIngredient\"/>";
@@ -715,7 +715,7 @@ public class EDbean implements Serializable{
 		}
 		out += "</select></td>";
 		out += "<td><input type=\"text\" name=\"addIngredientPercent\" /></td>";
-		out += "<td><input type=\"submit\" value=\"add\" /></td>";
+		out += "<td><input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add718\" /></td>";
 		out += "<input type=\"hidden\" name=\"presetFertiliserId\" value=\""+presentFertiliserId+"\">";
 		out += "<input type=\"hidden\" name=\"action\" value=\"05_addPresentIngredient\"/>";
 		out += "</tr>\n";
@@ -729,7 +729,7 @@ public class EDbean implements Serializable{
 		
 		out += "<form action=\"Controller\" method=\"post\" />";
 		out += "<td>";
-		out += "<input type=\"submit\" value=\"X\" />";
+		out += "<input id=\"image\" type=\"image\" src=\"if_edit-delete_9259.png\" alt=\"X732\" />";
 		out += "</td>";
 		out += "<input type=\"hidden\" name=\"fertiliserId\" value=\""+presentFertiliserId+"\"/>";
 		out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+ingredientId+"\"/>";
