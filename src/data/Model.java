@@ -311,6 +311,7 @@ public class Model {
 		ingredient.setName(name);
 		ingredient.setUnit(unit);
 		ingredient.setPrice(price);
+		ingredient.setActive(true);
 		return ingredient;
 	}
 	
@@ -318,8 +319,41 @@ public class Model {
 		ingredient.setActive(b);
 	}
 	
+	/**
+	 * Diese Funktion setzt den Status des uebergebenden PresentIngredient auf den boolischen Wert b.
+	 * 
+	 * @param presentIngredient - PresentIngredient
+	 * @param b - Boolean
+	 */
 	public void setPresentIngredientActive(PresentIngredient presentIngredient, boolean b){
 		presentIngredient.setActive(b);
+	}
+	
+	/**
+	 * Diese Funktion setzt den Status des uebergebenden RequiredIngredient auf den boolischen Wert b.
+	 * 
+	 * @param requiredIngredient - RequiredIngredient
+	 * @param b - Boolean
+	 */
+	public void setRequiredIngredientActive(RequiredIngredient requiredIngredient, boolean b){
+		requiredIngredient.setActive(b);
+	}
+	
+	/**
+	 * Erstellt ein RequiredIngredient und Speichert es unter dem mitgegebenden RequiredFertiliser
+	 * 
+	 * @param requiredFertiliser
+	 * @param id
+	 * @param percent
+	 */
+	public void addRequiredIngredient(RequiredFertiliser requiredFertiliser, int id, double percentMin, double percentMax){
+		RequiredIngredient	requiredIngredient;
+		
+		requiredIngredient = factory.createRequiredIngredient();
+		requiredIngredient.setIngredientId(id);
+		requiredIngredient.setPercentMin(percentMin);
+		requiredIngredient.setPercentMax(percentMax);
+		requiredFertiliser.getRequiredIngredients().getRequiredIngredient().add(requiredIngredient);
 	}
 	
 	/**
@@ -354,6 +388,14 @@ public class Model {
 		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
 	}
 	
+	/**
+	 * Diese Funktion gibt den entsprechenden PresentFertiliser anhand seiner Id zurück.
+	 * 
+	 * @param id - Id des PresentFertilisers
+	 * @return PresentFertiliser
+	 * 
+	 * Autor: Eddi M.
+	 */
 	public PresentFertiliser getPresentFertiliser(int id){
 		PresentFertiliser presentFertiliser;
 		presentFertiliser = this.modelData.getPresentFertiliser().get(id);
@@ -361,16 +403,32 @@ public class Model {
 	}
 	
 	/**
-	 * Ermittelt anhand der Id den PresentIngredient eines PresentFertiliser
+	 * Diese Funktion gibt den entsprechenden Required Fertiliser anhand seiner Id zurück.
+	 * 
+	 * @param id - Id des RequiredFertilisers
+	 * @return RequiredFertiliser
+	 * 
+	 * Autor: Eddi M.
+	 */
+	public RequiredFertiliser getRequiredFertiliser(int id){
+		RequiredFertiliser requiredFertiliser;
+		requiredFertiliser = this.modelData.getRequiredFertiliser().get(id);
+		return requiredFertiliser;
+	}
+	
+	/**
+	 * Ermittelt anhand des Index den PresentIngredient eines PresentFertiliser
 	 * 
 	 * @param presentFertiliser
-	 * @param presentIngredientId
+	 * @param presentIngredientIndex - Integer
 	 * @return
+	 * 
+	 * Autor: Eddi M.
 	 */
-	public PresentIngredient getPresentIngredient(PresentFertiliser presentFertiliser, int presentIngredientId){
+	public PresentIngredient getPresentIngredient(PresentFertiliser presentFertiliser, int presentIngredientIndex){
 		PresentIngredient presentIngredient;
 		int fId = presentFertiliser.getId();
-		presentIngredient = this.modelData.getPresentFertiliser().get(fId).getPresentIngredients().getPresentIngredient().get(presentIngredientId);
+		presentIngredient = this.modelData.getPresentFertiliser().get(fId).getPresentIngredients().getPresentIngredient().get(presentIngredientIndex);
 		return presentIngredient;
 	}
 	
@@ -378,6 +436,12 @@ public class Model {
 		PresentIngredient pi = createPresentIngredient(id, percent);
 		PresentFertiliser pf = getPresentFertiliser(pFertiliserId);
 		addPresentIngredient(pf, pi);
+	}
+	
+	public void addRequiredIngredient(int FertiliserId, int id, double percentMin, double percentMax){
+		RequiredIngredient requiredIngredient = createRequiredIngredient(id, percentMin, percentMax);
+		RequiredFertiliser requiredFertiliser = getRequiredFertiliser(FertiliserId);
+		addRequiredIngredient(requiredFertiliser, requiredIngredient);
 	}
 	
 	/**
@@ -404,20 +468,20 @@ public class Model {
 		presentIngredient = factory.createPresentIngredient();
 		presentIngredient.setIngredientId(id);
 		presentIngredient.setPercent(percent);
+		presentIngredient.setActive(true);
 		return presentIngredient;
 	}
 	
-	public void changePresentIngredient(int presentFertiliserId, int IngredientId, double percent){
+	public void changePresentIngredient(int presentFertiliserId, int ingredientIndex, double percent){
 		PresentFertiliser presentFertiliser = getPresentFertiliser(presentFertiliserId);
-		changePresentIngredient(presentFertiliser, IngredientId, percent);
+		changePresentIngredient(presentFertiliser, ingredientIndex, percent);
 	}
 	
-	public void changePresentIngredient(PresentFertiliser presentFertiliser, int ingredientId, double percent){
+	public void changePresentIngredient(PresentFertiliser presentFertiliser, int ingredientIndex, double percent){
 		PresentIngredient	presentIngredient;
 		
-		presentIngredient = getPresentIngredient(presentFertiliser, ingredientId);
+		presentIngredient = getPresentIngredient(presentFertiliser, ingredientIndex);
 		presentIngredient.setPercent(percent);
-		System.out.println("Der PresentIngredient wurde verändert.");
 	}
 	
 	/**
@@ -436,7 +500,7 @@ public class Model {
 	}
 	
 	/**
-	 * Die Funktion getIndexOfPreentIngredientFromIngredientId gibt den Index eines PresentIngredient zurück. Eingabewert sind der PresentFertiliser und die IngredientId.
+	 * Die Funktion getIndexOfPresentIngredientFromIngredientId gibt den Index eines PresentIngredient zurück. Eingabewert sind der PresentFertiliser und die IngredientId.
 	 * 
 	 * @param presentFertiliser - Als Objekt vom Typ PresentFertiliser
 	 * @param ingredientId - Integer
@@ -448,12 +512,10 @@ public class Model {
 		ArrayList<Integer> listId = this.getIdOfPresentIngredientsFromPresentFertiliser(presentFertiliser);
 			
 		if (listId.contains(ingredientId) == true){
-			System.out.println("Ingredient: " + ingredientId + " ist nicht in der Liste enthalten.");
 			int index = 0;
 			while (ingredientId != presentFertiliser.getPresentIngredients().getPresentIngredient().get(index).getIngredientId()){
 				index += 1;
 			}
-			System.out.println("Index ist: " + index);
 			return index;
 		}else {
 			return  -1;
@@ -462,7 +524,75 @@ public class Model {
 	}
 	
 	/**
-	 * Speichert ein RequiredIngredient unter dem mitgegebendem RequiredFertiliser
+	 * Ermittelt anhand des Index den RequiredIngredient eines RequiredFertiliser
+	 * 
+	 * @param requiredFertiliser
+	 * @param requiredIngredientIndex - Integer
+	 * @return
+	 * 
+	 * Autor: Eddi M.
+	 */
+	public RequiredIngredient getRequiredIngredient(RequiredFertiliser requiredFertiliser, int requiredIngredientIndex){
+		RequiredIngredient requiredIngredient;
+		int fId = requiredFertiliser.getId();
+		requiredIngredient = this.modelData.getRequiredFertiliser().get(fId).getRequiredIngredients().getRequiredIngredient().get(requiredIngredientIndex);
+		return requiredIngredient;
+	}
+	
+	public void changeRequiredIngredient(int requiredFertiliserId, int ingredientIndex, double percentMin, double percentMax){
+		RequiredFertiliser requiredFertiliser = getRequiredFertiliser(requiredFertiliserId);
+		changeRequiredIngredient(requiredFertiliser, ingredientIndex, percentMin, percentMax);
+	}
+	
+	public void changeRequiredIngredient(RequiredFertiliser requiredFertiliser, int ingredientIndex, double percentMin, double percentMax){
+		RequiredIngredient	requiredIngredient;
+		
+		requiredIngredient = getRequiredIngredient(requiredFertiliser, ingredientIndex);
+		requiredIngredient.setPercentMin(percentMin);
+		requiredIngredient.setPercentMax(percentMax);
+	}
+	
+	/**
+	 * Gibt eine Liste der RequiredIngredientId eines RequiredFertiliser wieder.
+	 * 
+	 * @param requiredFertiliser - Object RequiredFertiliser, über welchem interiert wird, um die Ids zu erhalten.
+	 * @return - Zurück gegeben wird eine ArrayListe mit allen Ids gespeichert als Integer.
+	 */
+	public ArrayList<Integer> getIdOfRequiredIngredientsFromRequiredFertiliser(RequiredFertiliser requiredFertiliser){
+		ArrayList<Integer> listId = new ArrayList<Integer>();
+		
+		for (int i=0; i < requiredFertiliser.getRequiredIngredients().getRequiredIngredient().size(); i++){
+			listId.add(requiredFertiliser.getRequiredIngredients().getRequiredIngredient().get(i).getIngredientId());
+		}
+		return listId;
+	}
+	
+	/**
+	 * Die Funktion getIndexOfRequiredIngredientFromIngredientId gibt den Index eines RequiredIngredient zurück. Eingabewert sind der RequiredFertiliser und die IngredientId.
+	 * 
+	 * @param presentFertiliser - Als Objekt vom Typ RequiredFertiliser
+	 * @param ingredientId - Integer
+	 * @return - Zurück gegeben wird die Index des RequiredIngredients, wenn die Id vorhanden ist oder -1 wenn sie es nicht ist.
+	 * 
+	 * Autor: Eddi M.
+	 */
+	public int getIndexOfRequiredIngredientFromIngredientId(RequiredFertiliser requiredFertiliser, int ingredientId){
+		ArrayList<Integer> listId = this.getIdOfRequiredIngredientsFromRequiredFertiliser(requiredFertiliser);
+			
+		if (listId.contains(ingredientId) == true){
+			int index = 0;
+			while (ingredientId != requiredFertiliser.getRequiredIngredients().getRequiredIngredient().get(index).getIngredientId()){
+				index += 1;
+			}
+			return index;
+		}else {
+			return  -1;
+		}
+		
+	}
+	
+	/**
+	 * Speichert ein RequiredIngredient unter dem mitgegebendem RequiredFertiliser ab.
 	 * 
 	 * @param requiredFertiliser
 	 * @param requiredIngredient
@@ -486,6 +616,7 @@ public class Model {
 		requiredIngredient.setIngredientId(id);
 		requiredIngredient.setPercentMin(minPercent);
 		requiredIngredient.setPercentMax(maxPercent);
+		requiredIngredient.setActive(true);
 		return requiredIngredient;
 	}
 	
