@@ -1,6 +1,13 @@
 package bean;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -58,10 +65,10 @@ public class EDbean implements Serializable{
 	/**
 	 * Absoluter Verzeichnisname des Verzeichnisses in dem die ModellDateien gespeichert werden
 	 */
-	public static final String ModelDir 	= "/Users/Max/Documents/workspace/Fertiliser_0.2/testDir/";
+	public static final String ModelDir 	= "C:\\Users\\jonas.goslicki\\OneDrive - Outsmart Group B.V\\Uni\\3.Semster\\Dynamisches Internetworking\\Belegarbeit\\Eddy_Eric_Jonas_Version\\Mueller_Project\\testDir\\";
 	//public static final String ModelDir 		= "/home/mitarbeiter/cmueller/or_model/Fertilizer/";
 
-	public static final String CmplModel 		= "/Users/Max/Documents/workspace/Fertiliser_0.2/cmpl/Fertilizer.cmpl";
+	public static final String CmplModel 		= "C:\\Users\\jonas.goslicki\\OneDrive - Outsmart Group B.V\\Uni\\3.Semster\\Dynamisches Internetworking\\Belegarbeit\\Eddy_Eric_Jonas_Version\\Mueller_Project\\cmpl\\Fertilizer.cmpl";
 	//public static final String CmplModel 		= "/Users/Max/Documents/workspace/Fertilizer_0.1/cmpl/Fertilizer.cmpl";
 
 	/**
@@ -95,22 +102,10 @@ public class EDbean implements Serializable{
 	private int ChangePresentIngredientId = -1;
 	
 	/**
-	 * Dieses Attribut ist für die Bearbeitung von vorhandenen RequiredIngredients da.
-	 * 
-	 */
-	private int ChangeRequiredIngredientId = -1;
-	
-	/**
 	 * Dieses Attribut ist für die Bearbeitung von vorhandenen Fertilisers da.
 	 * 
 	 */
 	private int ChangePresentFertiliserId = -1;
-	
-	/**
-	 * Dieses Attribut ist für die Bearbeitung von vorhandenen Fertilisers da.
-	 * 
-	 */
-	private int ChangeRequiredFertiliserId = -1;
 	
 	/**
 	 * Über AddIngredient wird die Sichtbarkeit der Zeile zum hinzufügen von neuen Zutaten geregelt.
@@ -127,8 +122,6 @@ public class EDbean implements Serializable{
 	 * Autor: Eddi M.
 	 */
 	private int[] AddPresentIngredients;
-	
-	private int[] AddRequiredIngredients;
 	
 	/**
 	 * Dieses Attribut regelt die Sichtbarkeit der ID Spalte
@@ -150,9 +143,14 @@ public class EDbean implements Serializable{
 	
 	private boolean ShowDeletedIngredients;
 	
-	private int[] ShowDeletedPresentIngredient;
+	/*
+	 * F�rs Nutzermanagment
+	 */
 	
-	private int[] ShowDeletedRequiredIngredient;
+	private String filepath	= ModelDir+"user.usr";
+	private File f 			= new File(filepath);
+	private int linefile	= 0;
+	private String[] LineArray;
 	
 	/**
 	 * Initialisierung der Webanwendung,
@@ -181,7 +179,6 @@ public class EDbean implements Serializable{
 	
 	public void setShowDeletedIngredient(boolean b){
 		this.setAddPresentIngredients("0", false);
-		this.setAddRequiredIngredients("0", false);
 		this.ShowDeletedIngredients = b;
 	}
 	
@@ -189,15 +186,10 @@ public class EDbean implements Serializable{
 		return this.ShowDeletedIngredients;
 	}
 	
-	
 	public void setModel(String modelId){
 		this.model		= Model.get(modelId);
 		this.modelData	= this.model.getModelData();
-		
 		this.setAddPresentIngredients("0", false);
-		this.setAddRequiredIngredients("0", false);
-		this.setShowDeletedPresentIngredient("0", false);
-		this.setShowDeletedRequiredIngredient("0", false);
 	}
 	
 	public Model getModel(){
@@ -235,12 +227,12 @@ public class EDbean implements Serializable{
 	public int getNrZutaten(String name){
 		int result = 0;
 		for (int i=0; i<getNrZutaten();i++){
-			
+			System.out.println(i);
 			if (this.modelData.getIngredients().getIngredient().get(i).getName().equals(name)){
 				result = this.modelData.getIngredients().getIngredient().get(i).getId();
 			}
 		}
-		
+		System.out.println(result);
 		return result;
 	}
 	
@@ -264,6 +256,7 @@ public class EDbean implements Serializable{
 	public void setChangePresentIngredientId(String sId){
 		int id = Integer.parseInt(sId);
 		this.ChangePresentIngredientId = id;
+		System.out.println("ChangePresentIngredientId hat den wert von: "+id);
 	}
 	
 	public int getChangePresentIngredientId(){
@@ -273,34 +266,16 @@ public class EDbean implements Serializable{
 	public void setChangePresentFertiliser(String sId){
 		int id = Integer.parseInt(sId);
 		this.ChangePresentFertiliserId = id;
+		System.out.println("ChangePresentFertiliser hat einen Wert von: " + id);
 	}
 	
 	public int getChangePresentFeritliser(){
 		return this.ChangePresentFertiliserId;
 	}
 	
-	public void setChangeRequiredFertiliser(String sId){
-		int id = Integer.parseInt(sId);
-		this.ChangeRequiredFertiliserId = id;
-	}
-	
-	public int getChangeRequiredFeritliser(){
-		return this.ChangeRequiredFertiliserId;
-	}
-	
-	public void setChangeRequiredIngredientId(String sId){
-		int id = Integer.parseInt(sId);
-		this.ChangeRequiredIngredientId = id;
-	}
-	
-	public int getChangeRequiredIngredientId(){
-		return ChangeRequiredIngredientId;
-	}
-	
 	public void setAddIngredient(boolean b){
 		if (b == true){
 			this.setAddPresentIngredients("0", false);
-			this.setAddRequiredIngredients("0", false);
 		}
 		this.AddIngredient = b;
 	}
@@ -318,7 +293,6 @@ public class EDbean implements Serializable{
 		if (sichtbarkeit == true){
 			sichtbarkeitAsInt = 1;
 			this.setAddIngredient(false);
-			this.setAddRequiredIngredients("0", false);
 		}else {
 			sichtbarkeitAsInt = 0;
 		}
@@ -331,77 +305,6 @@ public class EDbean implements Serializable{
 		return this.AddPresentIngredients;
 	}
 	
-	public void setAddRequiredIngredients(String strRequiredFertiliserId, boolean sichtbarkeit){
-		int sichtbarkeitAsInt, requiredFertiliserId;
-		requiredFertiliserId = Integer.parseInt(strRequiredFertiliserId);
-		
-		this.AddRequiredIngredients = new int[2];
-		
-		if (sichtbarkeit == true){
-			sichtbarkeitAsInt = 1;
-			this.setAddIngredient(false);
-		}else {
-			sichtbarkeitAsInt = 0;
-		}
-		 
-		this.AddRequiredIngredients[0] = requiredFertiliserId;
-		this.AddRequiredIngredients[1] = sichtbarkeitAsInt;
-	}
-	
-	public int[] getAddRequiredIngredients(){
-		return this.AddRequiredIngredients;
-	}
-	
-	/**
-	 * Diese Funktion regelt die Sichtbarkeit der geloeschten Prequiredngredients.
-	 * 
-	 * @param strPresentFertiliserId - String
-	 * @param sichtbarkeit - Boolean
-	 */
-	public void setShowDeletedPresentIngredient(String strPresentFertiliserId, boolean sichtbarkeit){
-		int sichtbarkeitAsInt, presentFertiliserId;
-		presentFertiliserId = Integer.parseInt(strPresentFertiliserId);
-		this.ShowDeletedPresentIngredient = new int[2];
-		if (sichtbarkeit == true){
-			sichtbarkeitAsInt = 1;
-			this.setAddIngredient(false);
-		}else{
-			sichtbarkeitAsInt = 0;
-		}
-		
-		this.ShowDeletedPresentIngredient[0] = presentFertiliserId;
-		this.ShowDeletedPresentIngredient[1] = sichtbarkeitAsInt;
-	}
-	
-	public int[] getShowDeletedPresentIngredient(){
-		return this.ShowDeletedPresentIngredient;
-	}
-	
-	/**
-	 * Diese Funktion regelt die Sichtbarkeit der geloeschten RequiredIngredients.
-	 * 
-	 * @param strRequiredFertiliserId - String
-	 * @param sichtbarkeit - Boolean
-	 */
-	public void setShowDeletedRequiredIngredient(String strRequiredFertiliserId, boolean sichtbarkeit){
-		int sichtbarkeitAsInt, requiredFertiliserId;
-		requiredFertiliserId = Integer.parseInt(strRequiredFertiliserId);
-		this.ShowDeletedRequiredIngredient = new int[2];
-		if (sichtbarkeit == true){
-			sichtbarkeitAsInt = 1;
-			this.setAddIngredient(false);
-		}else{
-			sichtbarkeitAsInt = 0;
-		}
-		
-		this.ShowDeletedRequiredIngredient[0] = requiredFertiliserId;
-		this.ShowDeletedRequiredIngredient[1] = sichtbarkeitAsInt;
-	}
-	
-	public int[] getShowDeletedRequiredIngredient(){
-		return this.ShowDeletedRequiredIngredient;
-	}
-	
 	public void setShowID(boolean b){
 		this.showID = b;
 	}
@@ -410,13 +313,6 @@ public class EDbean implements Serializable{
 		return this.showID;
 	}
 	
-	/**
-	 * Diese Funktion nimmt String werte und Speichert den Ingredient ab.
-	 * 
-	 * @param name
-	 * @param price
-	 * @param unit
-	 */
 	public void addIngredient(String name, String price, String unit){
 		int id = this.getNrZutaten();
 		try{
@@ -438,23 +334,11 @@ public class EDbean implements Serializable{
 		}
 	}
 	
-	/**
-	 * Diese Funktion entscheidet anhand der FertiliserId, des Namens des PresentIngredient, ob die Angabe als neuer PresentIngredient gespeichert oder
-	 * ein vorhander Ingredient aktualisiert werden soll.
-	 * Alle Parameter sind dabei als String zu übergeben.
-	 * 
-	 * Die Funktion fürt die zum Speichern notwendigen Funktionen aus.
-	 * 
-	 * @param fId - Die Id des Fertilisers als String
-	 * @param name - Name des PresentIngredient als String
-	 * @param percent - Prozentwert des PresentIngredients als String
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void addOrChangePresentIngredientViaName(String fId, String name, String percent){
+	public void addOrChangePresentIngredient(String fId, String name, String percent){
 		int presentIngredientId, presentFertiliserId;
 		double p;
 		presentIngredientId = this.getNrZutaten(name);
+		System.out.println("----Der presentIngredientId ist: "+ presentIngredientId);
 		
 		try {
 			presentFertiliserId = Integer.parseInt(fId);
@@ -464,55 +348,13 @@ public class EDbean implements Serializable{
 			p = 0.0;
 		}
 		
-		this.addOrChangePresentIngredient(presentFertiliserId, presentIngredientId, p);
-	}
-	
-	/**
-	 * Diese Funktion entscheidet anhand der FertiliserId und der Id des PresentIngredient, ob die Angabe als neuer PresentIngredient gespeichert oder
-	 * ein vorhander Ingredient aktualisiert werden soll.
-	 * Alle Parameter sind dabei als String zu übergeben.
-	 * 
-	 * Die Funktion fürt die zum Speichern notwendigen Funktionen aus.
-	 * 
-	 * @param fId - Die Id des Fertilisers als String
-	 * @param strPresentIngredientId - Id des PresentIngredients als String
-	 * @param percent - Prozentwert des PresentIngredients als String
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void addOrChangePresentIngredientViaId(String fId, String strPresentIngredientId, String percent){
-		int presentIngredientId, presentFertiliserId;
-		double p = 0.0;
-		presentIngredientId = Integer.parseInt(strPresentIngredientId);
-		
-		try {
-			presentFertiliserId = Integer.parseInt(fId);
-			p = Double.parseDouble(percent);
-		} catch(NumberFormatException e){
-			presentFertiliserId = 0;
-			System.out.println("Die eingelesenen Daten konnten nicht überführt werden.");
-		}
-		this.addOrChangePresentIngredient(presentFertiliserId, presentIngredientId, p);
-		
-	}
-	
-	/**
-	 * Diese Funktion entscheidet anhand der FertiliserId und der Id des PresentIngredient, ob die Angabe als neuer PresentIngredient gespeichert oder
-	 * ein vorhander Ingredient aktualisiert werden soll.
-	 * 
-	 * Die Funktion fürt die zum Speichern notwendigen Funktionen aus.
-	 * 
-	 * @param fId - Die Id des Fertilisers als Integer
-	 * @param strPresentIngredientId - Id des PresentIngredients als Integer
-	 * @param percent - Prozentwert des PresentIngredients als double
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void addOrChangePresentIngredient(int presentFertiliserId, int presentIngredientId, double p){
 		if (this.model.getIdOfPresentIngredientsFromPresentFertiliser(model.getPresentFertiliser(presentFertiliserId)).contains(presentIngredientId) == true){
-			int index = this.model.getIndexOfPresentIngredientFromIngredientId(this.model.getPresentFertiliser(presentFertiliserId), presentIngredientId);
-			this.changePresentIngredient(presentFertiliserId, index, p);
+			
+			this.changePresentIngredient(presentFertiliserId, presentIngredientId, 0);
+			this.aktualisierePercent(presentFertiliserId, presentIngredientId, p);
+			this.changePresentIngredient(presentFertiliserId, presentIngredientId, p);
 		}else {
+			this.aktualisierePercent(presentFertiliserId, presentIngredientId, p);
 			this.addPresentIngredient(presentFertiliserId, presentIngredientId, p);
 		}
 	}
@@ -521,106 +363,21 @@ public class EDbean implements Serializable{
 		this.model.addPresentIngredient(fertiliserId, presentIngredientId, percent);
 	}
 	
-	public void changePresentIngredient(String fId, String s_presentIngredientIndex, String percent){
-		int presentIngredientIndex = Integer.parseInt(s_presentIngredientIndex);
+	public void changePresentIngredient(String fId, String s_presentIngredientId, String percent){
+		int presentIngredientId = Integer.parseInt(s_presentIngredientId);
 		try{
 			int presentFertiliserId = Integer.parseInt(fId);
 			double p = Double.parseDouble(percent);
-			this.changePresentIngredient(presentFertiliserId, presentIngredientIndex, p);
+			this.aktualisierePercent(presentFertiliserId, presentIngredientId, p);
+			this.changePresentIngredient(presentFertiliserId, presentIngredientId, p);
+			System.out.println("Es wurde ein PresentIngredient geändert");
 		}catch(NumberFormatException e){
 			System.out.println("Es konnte der PresentIngredient nicht geändert werden");
 		}
 	}
 	
-	public void changePresentIngredient(int fertiliserId, int presentIngredientIndex, double percent){
-		this.model.changePresentIngredient(fertiliserId, presentIngredientIndex, percent);
-	}
-	
-	/**
-	 * Diese Funktion entscheidet anhand der FertiliserId, des Namens des RequiredIngredient, ob die Angabe als neuer RequiredIngredient gespeichert oder
-	 * ein vorhander Ingredient aktualisiert werden soll.
-	 * Alle Parameter sind dabei als String zu übergeben.
-	 * 
-	 * Die Funktion fürt die zum Speichern notwendigen Funktionen aus.
-	 * 
-	 * @param fId - Die Id des Fertilisers als String
-	 * @param name - Name des RequiredIngredient als String
-	 * @param percent - Prozentwert des RequiredIngredients als String
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void addOrChangeRequiredIngredientViaName(String fId, String name, String percentMin, String percentMax){
-		int requiredIngredientId, requiredFertiliserId;
-		double pMin = 0.0, pMax = 0.0;
-		requiredIngredientId = this.getNrZutaten(name);
-		
-		try {
-			requiredFertiliserId = Integer.parseInt(fId);
-			pMin = Double.parseDouble(percentMin);
-			pMax = Double.parseDouble(percentMax);
-		} catch(NumberFormatException e){
-			requiredFertiliserId = 0;
-		}
-		
-		this.addOrChangeRequiredIngredient(requiredFertiliserId, requiredIngredientId, pMin, pMax);
-	}
-	
-	/**
-	 * Diese Funktion entscheidet anhand der FertiliserId und der Id des RequiredIngredient, ob die Angabe als neuer RequiredIngredient gespeichert oder
-	 * ein vorhander Ingredient aktualisiert werden soll.
-	 * Alle Parameter sind dabei als String zu übergeben.
-	 * 
-	 * Die Funktion fürt die zum Speichern notwendigen Funktionen aus.
-	 * 
-	 * @param fId - Die Id des Fertilisers als String
-	 * @param strRequiredIngredientId - Id des RequiredIngredients als String
-	 * @param percent - Prozentwert des RequiredIngredients als String
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void addOrChangeRequiredIngredientViaId(String fId, String strRequiredIngredientId, String percentMin, String percentMax){
-		int requiredIngredientId, requiredFertiliserId;
-		double pMin = 0.0, pMax = 0.0;
-		requiredIngredientId = Integer.parseInt(strRequiredIngredientId);
-		
-		try {
-			requiredFertiliserId = Integer.parseInt(fId);
-			pMin = Double.parseDouble(percentMin);
-			pMax = Double.parseDouble(percentMax);
-		} catch(NumberFormatException e){
-			requiredFertiliserId = 0;
-		}
-		this.addOrChangeRequiredIngredient(requiredFertiliserId, requiredIngredientId, pMin, pMax);
-		
-	}
-	
-	/**
-	 * Diese Funktion entscheidet anhand der FertiliserId und der Id des RequiredIngredient, ob die Angabe als neuer RequiredIngredient gespeichert oder
-	 * ein vorhander Ingredient aktualisiert werden soll.
-	 * 
-	 * Die Funktion fürt die zum Speichern notwendigen Funktionen aus.
-	 * 
-	 * @param fId - Die Id des Fertilisers als Integer
-	 * @param strRequiredIngredientId - Id des RequiredIngredients als Integer
-	 * @param percent - Prozentwert des RequiredIngredients als double
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void addOrChangeRequiredIngredient(int requiredFertiliserId, int requiredIngredientId, double percentMin, double percentMax){
-		if (this.model.getIdOfRequiredIngredientsFromRequiredFertiliser(model.getRequiredFertiliser(requiredFertiliserId)).contains(requiredIngredientId) == true){
-			int index = this.model.getIndexOfRequiredIngredientFromIngredientId(this.model.getRequiredFertiliser(requiredFertiliserId), requiredIngredientId);
-			this.changeRequiredIngredient(requiredFertiliserId, index, percentMin, percentMax);
-		}else {
-			this.addRequiredIngredient(requiredFertiliserId, requiredIngredientId, percentMin, percentMax);
-		}
-	}
-	
-	public void addRequiredIngredient(int fertiliserId, int requiredIngredientId, double percentMin, double percentMax){
-		this.model.addRequiredIngredient(fertiliserId, requiredIngredientId, percentMin, percentMax);
-	}
-	
-	public void changeRequiredIngredient(int fertiliserId, int presentIngredientIndex, double percentMin, double percentMax){
-		this.model.changeRequiredIngredient(fertiliserId, presentIngredientIndex, percentMin, percentMax);
+	public void changePresentIngredient(int fertiliserId, int presentIngredientId, double percent){
+		this.model.changePresentIngredient(fertiliserId, presentIngredientId, percent);
 	}
 	
 	/**
@@ -638,42 +395,30 @@ public class EDbean implements Serializable{
 	}
 	
 	/**
-	 * 
-	 * 
-	 */
-	public void aktualisierePercent(String fId){
-		int presentFertiliserId = Integer.parseInt(fId);
-		
-		this.aktualisierePercent(presentFertiliserId);
-	}
-	
-	/**
 	 * Diese Funktion aktualisiert die Prozentwerte der vorhandenen PresentIngrediens, wenn der Gesamtwert über 100 % sein sollte.
 	 * Die Prozente werden automatisch angepasst, sodass das gleiche Verhältnis bestehen bleibt.
 	 * 
-	 * @param fId - Integer
+	 * @param fId
 	 * @param presentIngredientId
+	 * @param percentOff
 	 * 
 	 * Autor: Eddi M.
 	 */
-	public void aktualisierePercent(int fId){
+	public void aktualisierePercent(int fId, int presentIngredientId, double percent){
 		
 		PresentFertiliser fertiliser = this.modelData.getPresentFertiliser().get(fId);
 		
 		double sumPercent = 0.0;
 		sumPercent += this.getTotalPercentOfPresentIngredients(fId);
-		for (int i=0; i< this.getNrZutaten(); i++){
-			if (this.modelData.getIngredients().getIngredient().get(i).isActive() == true && this.modelData.getIngredients().getIngredient().get(i).getActive() == true && model.getIdOfPresentIngredientsFromPresentFertiliser(model.getPresentFertiliser(fId)).contains(i) == true ){
-				
-				int index = model.getIndexOfPresentIngredientFromIngredientId(fertiliser, i);
-				PresentIngredient pi = model.getPresentIngredient(fertiliser, index);
-				
-				if (pi.isActive() == false){
-					this.setPresentIngredientActive(fertiliser, Integer.toString(i), true);
-				}
-				if (pi.getActive() == true){
-					double neuPercent = runden((100) * (pi.getPercent()/(sumPercent)), 2);
-					changePresentIngredient(fId, index, neuPercent);
+		sumPercent += percent;
+		if (sumPercent > 100){
+			for (int i=0; i< this.getNrZutaten(); i++){
+				if (this.modelData.getIngredients().getIngredient().get(i).isActive() == true && this.modelData.getIngredients().getIngredient().get(i).getActive() == true && model.getIdOfPresentIngredientsFromPresentFertiliser(model.getPresentFertiliser(fId)).contains(i) == true ){
+					if (i != presentIngredientId ){
+						PresentIngredient pi = model.getPresentIngredient(fertiliser, i);
+						double neuPercent = runden((100 - percent) * (pi.getPercent()/(sumPercent - percent)), 2);
+						changePresentIngredient(fId, i, neuPercent);
+					}
 				}
 			}
 		}
@@ -687,14 +432,15 @@ public class EDbean implements Serializable{
 		return this.ChangeIngredientId;
 	}
 	
-	//-------------------------------------
 	/**
 	 * liefert HTML String fuer ZutatenTableau
 	 * @return
 	 */
 	public String getZutatenTableau(){
+		String right = GetUserRightInModel(model.getId(),getNutzer());
 		String out = "";
-		out += "<table border=\"1\">\n";
+		out += "<div class=\"container\">";
+		out += "<table border=\"1\" class='table table-bordered' style=' text-align: center;color:white' >\n";
 		if (this.showID == true){
 			out += "<tr><th colspan=\"6\">Zutaten</th></tr>\n";
 		}else if (this.showID == false){
@@ -707,27 +453,33 @@ public class EDbean implements Serializable{
 		out += "<th>";
 		if (this.ShowDeletedIngredients == true){
 			out += "<form action=\"Controller\" method=\"post\" />";
-			out += "deleted ";
-			out += this.getImageAndToolTip(Images.Unvisible);
+			out += "<input type=\"submit\" value=\"dont show deleted\"  class='btn btn-xs btn-danger'/>";
 			out += "<input type=\"hidden\" name=\"action\" value=\"24_dontshowDeletedIngredients\"/>";
 			out += "</form>";
 		}else {
-			out += "<form action=\"Controller\" method=\"post\" />";
-			out += "deleted ";
-			out += this.getImageAndToolTip(Images.Visible);
-			out += "<input type=\"hidden\" name=\"action\" value=\"23_showDeletedIngredients\"/>";
-			out += "</form>";
+			if(right.equals("x") || right.equals("w")) {
+				out += "<form action=\"Controller\" method=\"post\" />";
+				out += "<input type=\"submit\" value=\"show deleted\"  class='btn btn-xs btn-danger'/>";
+				out += "<input type=\"hidden\" name=\"action\" value=\"23_showDeletedIngredients\"/>";
+				out += "</form>";
+			}else {
+				out += "";
+			}
 		}
 		out += "</th><th>Name</th><th>Preis [&euro;/Einheit]</th><th>Einheit</th>";
 		out += "<form action=\"Controller\" method=\"post\" />";
 		if (this.AddIngredient == false){
-			out += "<td>";
-			out += this.getImageAndToolTip(Images.Add);
-			out += "</td></tr>\n";
-			out += "<input type=\"hidden\" name=\"action\" value=\"20_showRowAdding\"/>";
+			if(right.equals("x") || right.equals("w")) {
+				out += "<td>";
+				out += "<input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add451\" />";
+				out += "</td></tr>\n";
+				out += "<input type=\"hidden\" name=\"action\" value=\"20_showRowAdding\"/>";
+			}else {
+				out += "<td></td></tr>";
+			}
 		}else if (this.AddIngredient == true){
 			out += "<td>";
-			out += this.getImageAndToolTip(Images.Back);
+			out += "<input id=\"image\" type=\"image\" src=\"if_Arrow_Back_1063891.png\" alt=\"back456\" />";
 			out += "</td></tr>\n";
 			out += "<input type=\"hidden\" name=\"action\" value=\"21_NoShowRowAdding\"/>";
 		}
@@ -745,11 +497,11 @@ public class EDbean implements Serializable{
 					if (this.showID == true){
 						out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getId()+"</td>";
 					}
-					out += this.getDeleteIngredientButton(i);
+					out += this.getDeleteButton(i);
 					out += "<form action=\"Controller\" method=\"post\" />";
 					out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getName()+"</td>";
-					out += "<td><input type=\"text\" name=\"addIngredientPrice\" value=\""+this.modelData.getIngredients().getIngredient().get(i).getPrice()+ "\"/></td>";
-					out += "<td><select name=\"addIngredientUnit\" >";
+					out += "<td><input type=\"text\" class=\"form-control\" name=\"addIngredientPrice\" value=\""+this.modelData.getIngredients().getIngredient().get(i).getPrice()+ "\"/></td>";
+					out += "<td><select name=\"addIngredientUnit\" class=\"form-control\">";
 					for( Units u : Units.values()){
 						if (u.value() == this.modelData.getIngredients().getIngredient().get(i).getUnit().value()){
 							out += "<option selected>"+u.value()+"</option>";
@@ -758,9 +510,7 @@ public class EDbean implements Serializable{
 						}
 					}
 					out += "</select>";
-					out += "<td>";
-					out += this.getImageAndToolTip(Images.Done);
-					out += "</td>";
+					out += "<td><input type=\"submit\" class=\"btn btn-success\" value=\"save\" /></td>";
 					out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+this.modelData.getIngredients().getIngredient().get(i).getId()+"\"/>";
 					out += "<input type=\"hidden\" name=\"action\" value=\"07_saveEditIngredient\"/>";
 					out += "</form>";
@@ -768,18 +518,21 @@ public class EDbean implements Serializable{
 					if (this.showID == true){
 						out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getId()+"</td>";
 					}
-					out += this.getDeleteIngredientButton(i);
+					out += this.getDeleteButton(i);
 					out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getName()+"</td>";
 					out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getPrice()+"</td>";
 					out += "<td>"+this.modelData.getIngredients().getIngredient().get(i).getUnit()+"</td>";
 					out += "<form action=\"Controller\" method=\"post\" />";
 					out += "</select>";
-					out += "<td>";
-					out += this.getImageAndToolTip(Images.Edit);
-					out += "</td>";
-					out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+i+"\"/>";
-					out += "<input type=\"hidden\" name=\"action\" value=\"06_editIngredient\"/>";
-					out += "</form>";
+					if(right.equals("x") || right.equals("w")) {
+						out += "<td><input type=\"image\" src=\"if_Pencil_1021030.png\" alt=\"edit501\" /></td>";
+						out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+i+"\"/>";
+						out += "<input type=\"hidden\" name=\"action\" value=\"06_editIngredient\"/>";
+						out += "</form>";
+					}else {
+						out += "<td></td></form>";
+					}
+					
 				}
 				
 			}
@@ -789,22 +542,7 @@ public class EDbean implements Serializable{
 		if (this.AddIngredient == true){
 			out += this.getRowAddIngredient();
 		}
-		out += "</table>\n";
-		return out;
-	}
-	
-	/**
-	 * Diese Funktion gibt ein String zurück in dem der Image mit AltTag und Tooltip dargestellt wird.
-	 * 
-	 * @param image des Typs Images
-	 * @return String
-	 * 
-	 * @Autor: Eddi M.
-	 */
-	private String getImageAndToolTip(Images image){
-		String out="";
-		
-		out += "<input id=\"image\" type=\"image\" src=\"" + image.getImagePfad() + "\" alt=\""+ image.getAltTag() +"\" data-toggle=\"tooltip\" data-placement=\"top\" title=\""+ image.getToolTip() +"\" />";
+		out += "</table> </div>\n";
 		return out;
 	}
 	
@@ -814,12 +552,13 @@ public class EDbean implements Serializable{
 	 * @parm Integerwert der die ID des Ingredients wiedergibt.
 	 * @return Es wird der Button als html String zurück gegeben
 	 */
-	private String getDeleteIngredientButton(int ingredientId){
+	private String getDeleteButton(int ingredientId){
+		String right = GetUserRightInModel(model.getId(),getNutzer());
 		String out = "";
 		if (this.ShowDeletedIngredients == true && this.modelData.getIngredients().getIngredient().get(ingredientId).getActive() == false){
 			out += "<form action=\"Controller\" method=\"post\" />";
 			out += "<td>";
-			out += this.getImageAndToolTip(Images.Add);
+			out += "<input id=\"image\" type=\"image\" src=\"if_edit-add_9254.png\" alt=\"Hinzuf�gen529\" />";
 			out += "</td>";
 			out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+ingredientId+"\"/>";
 			out += "<input type=\"hidden\" name=\"action\" value=\"25_undeleteIngredients\" />";
@@ -827,7 +566,9 @@ public class EDbean implements Serializable{
 		}else{
 			out += "<form action=\"Controller\" method=\"post\" />";
 			out += "<td>";
-			out += this.getImageAndToolTip(Images.Delete);
+			if(right.equals("x") || right.equals("w")) {
+				out += "<input id=\"image\" type=\"image\" src=\"if_edit-delete_9259.png\" alt=\"X537\" />";
+			}
 			out += "</td>";
 			out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+ingredientId+"\"/>";
 			out += "<input type=\"hidden\" name=\"action\" value=\"22_deleteIngredients\" />";
@@ -863,13 +604,13 @@ public class EDbean implements Serializable{
 			out += "<option>"+u.value()+"</option>";
 		}
 		out += "</select>";
-		out += "<td>";
-		out += this.getImageAndToolTip(Images.Done);
-		out += "</td>";
+		out += "<td><input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add473\" /></td>";
 		out += "<input type=\"hidden\" name=\"action\" value=\"04_addIngredient\"/>";
 		out += "</tr>\n";
 		out += "</form>";
 		
+		System.out.println("getRowAddIngredients wurde ausgeführt");
+		System.out.println(out);
 		return out;
 	}
 	
@@ -878,23 +619,25 @@ public class EDbean implements Serializable{
 	 * @return
 	 */
 	public String getVorhandenDuengerTableau(){
+		String right = GetUserRightInModel(model.getId(),getNutzer());
 		String out = "";
-		out += "<table border=\"1\">\n";
+		out += "<div class=\"container\">";
+		out += "<table border=\"1\" class='table table-bordered' style=' text-align: center;color:white' >\n";
 		if (this.showID == true){
 			out += "<tr><td colspan=\"5\">";
 		}else{
 			out += "<tr><td colspan=\"4\">";
 		}
-		out += "Vorhandene Duenger</th></tr>\n";
+		out += "<u>Vorhandene Duenger</u></th></tr>\n";
 		
 		for (int i=0; i< this.getNrDuengerVorhanden(); i++ ){
 			PresentFertiliser fertiliser = this.modelData.getPresentFertiliser().get(i);
 			if (this.showID == true){
 				out += "<tr><td colspan=\"5\">";
-				out += "<b>ID: </b>"+fertiliser.getId()+"<br/>";
 			}else{
 				out += "<tr><td colspan=\"4\">";
 			}
+			out += "<b>ID: </b>"+fertiliser.getId()+"<br/>";
 			out += "<b>Name: </b>"+fertiliser.getName()+"<br/>";
 			out += "<b>Bestand: </b>"+fertiliser.getAmount()+"<br/>";
 			out += "<b>Einheit: </b>"+fertiliser.getUnit()+"<br/>";
@@ -904,44 +647,23 @@ public class EDbean implements Serializable{
 			if (this.showID == true){
 				out += "<th>Id</th>";
 			}
-			out += "<th>";
-			if (this.ShowDeletedPresentIngredient[0] == i && this.ShowDeletedPresentIngredient[1] == 1){
-				out += "<form action=\"Controller\" method=\"post\" />";
-				out += "deleted ";
-				out += this.getImageAndToolTip(Images.Unvisible);
-				out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"29_dontshowDeletedPresentIngredients\"/>";
-				out += "</form>";
-			}else{
-				out += "<form action=\"Controller\" method=\"post\" />";
-				out += "deleted ";
-				out += this.getImageAndToolTip(Images.Visible);
-				out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"30_showDeletedPresentIngredients\"/>";
-				out += "</form>";
-			}
-			out += "</th>";
+			out += "<th>delete</th>";
 			out += "<th>Name</th><th>";
-			
-			out += "<form action=\"Controller\" method=\"post\" />";
-			out += "" + this.getTotalPercentOfPresentIngredients(i) + " % ";
-			out += this.getImageAndToolTip(Images.FillUp);
-			out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
-			out += "<input type=\"hidden\" name=\"action\" value=\"32_aktualisierePercentOfPresentIngredients\"/>";
-			out += "</form>";
-			out += "</th>";
+			out += " " + this.getTotalPercentOfPresentIngredients(i) + " %</th>";
 			out += "<th>";
 			
 			// Addbutton im Menu
 			out += "<form action=\"Controller\" method=\"post\" />";
 			if (this.AddPresentIngredients[1] == 1 && this.AddPresentIngredients[0] == i){
-				out += this.getImageAndToolTip(Images.Back);
+				out += "<input id=\"image\" type=\"image\" src=\"if_Arrow_Back_1063891.png\" alt=\"back622\" />";
 				out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
 				out += "<input type=\"hidden\" name=\"action\" value=\"27_NoShowRowPresentIngredientAdding\"/>";
 			}else{
-				out += this.getImageAndToolTip(Images.Add);
-				out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"26_showRowPresentIngredientAdding\"/>";
+				if(right.equals("x") || right.equals("w")) {
+					out += "<input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add626\" />";
+					out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+ i +"\"/>";
+					out += "<input type=\"hidden\" name=\"action\" value=\"26_showRowPresentIngredientAdding\"/>";
+				}
 			}
 			out += "</form>";
 			
@@ -949,55 +671,49 @@ public class EDbean implements Serializable{
 			out += "</tr>\n";
 			for(int j=0; j< this.getNrZutaten(); j++){
 				
-				System.out.println("RequiredFertiliser: " + i + " RequiredIngredient: " + j);
 				if (this.modelData.getIngredients().getIngredient().get(j).isActive() == false){
 					this.setIngredientActive(Integer.toString(j), true);
 				}
-				System.out.println("RequiredIngredients of RequiredFertiliser: " + model.getIdOfPresentIngredientsFromPresentFertiliser(fertiliser));
+				
 				if (this.modelData.getIngredients().getIngredient().get(j).isActive() == true &&
 					this.modelData.getIngredients().getIngredient().get(j).getActive() == true &&
 					model.getIdOfPresentIngredientsFromPresentFertiliser(fertiliser).contains(j) == true){
 					
 					int index = model.getIndexOfPresentIngredientFromIngredientId(fertiliser, j);
 					PresentIngredient pi = fertiliser.getPresentIngredients().getPresentIngredient().get(index);
-					System.out.println("Status von requiredIngredient: " + pi.getActive());
 					if (pi.isActive() == false){
 						this.setPresentIngredientActive(fertiliser, Integer.toString(j), true);
 					}
-					if (pi.isActive() == true && 
-							(pi.getActive() == true || 
-								(this.ShowDeletedPresentIngredient[0] == i && 
-								this.ShowDeletedPresentIngredient[1] == 1
-								)
-							)
-						){
+					if (pi.isActive() == true && pi.getActive() == true){
 					
 						out += "<tr>";
 						if (this.showID == true){
 							out += "<td>"+pi.getIngredientId()+"</td>";
 						}
-						out += this.getDeletePresentIngredientButton(i, index);
+						out += this.getDeleteButton(i, index);
 						out += "<td>"+this.modelData.getIngredients().getIngredient().get(pi.getIngredientId()).getName()+"</td>";
 						
-						if (i == this.getChangePresentFeritliser() && index == model.getIndexOfPresentIngredientFromIngredientId(fertiliser, this.getChangePresentIngredientId())){
+						if (i == this.getChangePresentFeritliser() && index == this.getChangePresentIngredientId()){
 							out += "<form action=\"Controller\" method=\"post\" />";
 							out += "<td><input type=\"text\" name=\"changeIngredientPercent\" value=\""+pi.getPercent()+"\"/></td>";
-							out += "<td>";
-							out += this.getImageAndToolTip(Images.Done);
-							out += "</td>";
+							out += "<td><input type=\"submit\" value=\"save\" /></td>";
 							out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+i+"\"/>";
-							out += "<input type=\"hidden\" name=\"presentIngredientId\" value=\""+j+"\"/>";
+							out += "<input type=\"hidden\" name=\"presentIngredientId\" value=\""+index+"\"/>";
 							out += "<input type=\"hidden\" name=\"action\" value=\"09_saveEditPresentIngredient\"/>";
 							out += "</form>";
 						}else{
+							System.out.println("ich bin noch innerhalb der if");
 							out += "<td>"+pi.getPercent()+"</td>";
 							out += "<form action=\"Controller\" method=\"post\" />";
 							out += "</select>";
-							out += "<td>";
-							out += this.getImageAndToolTip(Images.Edit);
-							out += "</td>";
+							if(right.equals("w") || right.equals("x")) {
+								out += "<td><input type=\"image\" src=\"if_Pencil_1021030.png\" alt=\"edit671\" /></td>";
+							}else {
+								out += "<td></td>";
+							}
+							
 							out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+i+"\"/>";
-							out += "<input type=\"hidden\" name=\"presentIngredientId\" value=\""+j+"\"/>";
+							out += "<input type=\"hidden\" name=\"presentIngredientId\" value=\""+index+"\"/>";
 							out += "<input type=\"hidden\" name=\"action\" value=\"08_editPresentIngredient\"/>";
 							out += "</form>";
 						}
@@ -1012,7 +728,7 @@ public class EDbean implements Serializable{
 			out += "<br>";
 		}
 		
-		out += "</table>\n";
+		out += "</table></span></div>\n";
 		return out;
 	}
 	
@@ -1042,9 +758,7 @@ public class EDbean implements Serializable{
 		}
 		out += "</select></td>";
 		out += "<td><input type=\"text\" name=\"addIngredientPercent\" /></td>";
-		out += "<td>";
-		out += this.getImageAndToolTip(Images.Done);
-		out += "</td>";
+		out += "<td><input id=\"image\" type=\"image\" src=\"if_add_326505.png\" alt=\"add718\" /></td>";
 		out += "<input type=\"hidden\" name=\"presetFertiliserId\" value=\""+presentFertiliserId+"\">";
 		out += "<input type=\"hidden\" name=\"action\" value=\"05_addPresentIngredient\"/>";
 		out += "</tr>\n";
@@ -1053,45 +767,26 @@ public class EDbean implements Serializable{
 		return out;
 	}
 	
-	/**
-	 * Diese Funktion zeigt je nach Status des PresentIngredients ein Button zum loeschen oder ein Button zum hinzufuegen.
-	 * Des Weiteren haegt die Darstellung davon, ob die geloeschten PresentIngredients eingezeigt werden sollen.
-	 * 
-	 * @param presentFertiliserId - Integer
-	 * @param ingredientIndex - Integer
-	 * @return
-	 */
-	private String getDeletePresentIngredientButton(int presentFertiliserId, int ingredientIndex){
+	private String getDeleteButton(int presentFertiliserId, int ingredientId){
+		String right = GetUserRightInModel(model.getId(),getNutzer());
 		String out = "";
-		PresentFertiliser presentFertiliser= this.modelData.getPresentFertiliser().get(presentFertiliserId);
-		PresentIngredient presentIngredient = presentFertiliser.getPresentIngredients().getPresentIngredient().get(ingredientIndex);
-		if (
-			(this.ShowDeletedPresentIngredient[0] == presentFertiliserId && this.ShowDeletedPresentIngredient[1] == 1) && 
-			presentIngredient.getActive() == false
-			){
-			
-			out += "<form action=\"Controller\" method=\"post\" />";
-			out += "<td>";
-			out += this.getImageAndToolTip(Images.Add);
-			out += "</td>";
-			out += "<input type=\"hidden\" name=\"presentFertiliserId\" value=\""+presentFertiliserId+"\"/>";
-			out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+presentIngredient.getIngredientId()+"\"/>";
-			out += "<input type=\"hidden\" name=\"action\" value=\"31_undeletePresentIngredients\" />";
-			out += "</form>";
-		}else{
-			out += "<form action=\"Controller\" method=\"post\" />";
-			out += "<td>";
-			out += this.getImageAndToolTip(Images.Delete);
-			out += "</td>";
-			out += "<input type=\"hidden\" name=\"fertiliserId\" value=\""+presentFertiliserId+"\"/>";
-			out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+presentIngredient.getIngredientId()+"\"/>";
-			out += "<input type=\"hidden\" name=\"action\" value=\"28_deletePresentIngredient\" />";
-			out += "</form>";
-			
-		}
 		
+		out += "<form action=\"Controller\" method=\"post\" />";
+		out += "<td>";
+		if(right.equals("x") || right.equals("w")) {
+			out += "<input id=\"image\" type=\"image\" src=\"if_edit-delete_9259.png\" alt=\"X732\" />";
+		}
+		out += "</td>";
+		out += "<input type=\"hidden\" name=\"fertiliserId\" value=\""+presentFertiliserId+"\"/>";
+		out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+ingredientId+"\"/>";
+		out += "<input type=\"hidden\" name=\"action\" value=\"28_deletePresentIngredient\" />";
+		out += "</form>";
+	
 		return out;
 		
+		//---------
+		//this.modelData.getPresentFertiliser().get(0).getPresentIngredients().getPresentIngredient().get(3);
+		//---------
 	}
 	
 	/**
@@ -1104,243 +799,58 @@ public class EDbean implements Serializable{
 	 */
 	public double getTotalPercentOfPresentIngredients(int presentFertiliserId){
 		double sum = 0.0;
-		PresentFertiliser presentFertiliser = model.getPresentFertiliser(presentFertiliserId);
 		
 		for (int i=0; i< this.getNrZutaten(); i++){
-			if (this.modelData.getIngredients().getIngredient().get(i).isActive() == true && this.modelData.getIngredients().getIngredient().get(i).getActive() == true && model.getIdOfPresentIngredientsFromPresentFertiliser(presentFertiliser).contains(i) == true){
-				
+			if (this.modelData.getIngredients().getIngredient().get(i).isActive() == true && this.modelData.getIngredients().getIngredient().get(i).getActive() == true && model.getIdOfPresentIngredientsFromPresentFertiliser(model.getPresentFertiliser(presentFertiliserId)).contains(i) == true ){
 				int index = model.getIndexOfPresentIngredientFromIngredientId(model.getPresentFertiliser(presentFertiliserId), i);
-				PresentIngredient presentIngredient= model.getPresentIngredient(presentFertiliser, index);
-				System.out.println("PresentFertiliserId " + presentFertiliserId + " PresentIngredientId: " + i + " index: " + index);
-				if (presentIngredient.isActive() == false){
-					this.setPresentIngredientActive(presentFertiliser, Integer.toString(i), true);
-				}
-				if (presentIngredient.isActive() == true && presentIngredient.getActive() == true){
-					sum += presentIngredient.getPercent();
-				}
+				sum += this.modelData.getPresentFertiliser().get(presentFertiliserId).getPresentIngredients().getPresentIngredient().get(index).getPercent();
+				
+				System.out.println("Percent: " + this.modelData.getPresentFertiliser().get(presentFertiliserId).getPresentIngredients().getPresentIngredient().get(index).getPercent() + " Fertiliser: " + presentFertiliserId);
 			}
+			
 		}
 		return this.runden(sum, 2);
 	}
 	
 	/**
-	 * liefert HTML String für benötigte Dünger
+	 * liefert HTML String fuer benoetigte Duenger
 	 * @return
 	 */
 	public String getBenoetigteDuengerTableau(){
 		String out = "";
-		out += "<table border=\"1\">\n";
-		if (this.showID == true){
-			out += "<tr><td colspan=\"6\">";
-		}else{
-			out += "<tr><td colspan=\"5\">";
-		}
-		out += "Benoetigter Duenger</th></tr>\n";
+		out += "<div class=\"container\" >";
+		out += "<table border=\"1\" class='table table-bordered' style=' text-align: center;color:white' >\n";
+		out += "<tr><th colspan=\"4\"><u>Ben�tigte Duenger</u></th></tr>\n";
 		
 		for (int i=0; i< this.getNrDuengerBenoetigt(); i++ ){
 			RequiredFertiliser fertiliser = this.modelData.getRequiredFertiliser().get(i);
-			if (this.showID == true){
-				out += "<tr><td colspan=\"6\">";
-				out += "<b>ID: </b>"+fertiliser.getId()+"<br/>";
-			}else{
-				out += "<tr><td colspan=\"5\">";
-			}
+			out += "<tr><td colspan=\"4\">";
+			out += "<b>ID: </b>"+fertiliser.getId()+"<br/>";
 			out += "<b>Name: </b>"+fertiliser.getName()+"<br/>";
 			out += "<b>Bestand: </b>"+fertiliser.getAmount()+"<br/>";
 			out += "<b>Einheit: </b>"+fertiliser.getUnit()+"<br/>";
 			out += "<b>Bestandteile:</b>";
 			out += "</td></tr>\n";
-			out += "<tr>";
-			if (this.showID == true){
-				out += "<th>Id</th>";
+			out += "<tr><th>Id</th><th>Name</th><th>min %</th><th>max %</th></tr>\n";
+			for(int j=0; j< fertiliser.getRequiredIngredients().getRequiredIngredient().size(); j++){
+				RequiredIngredient ri = fertiliser.getRequiredIngredients().getRequiredIngredient().get(j);
+				out += "<tr>";
+				out += "<td>"+ri.getIngredientId()+"</td>";
+				out += "<td>"+this.modelData.getIngredients().getIngredient().get(ri.getIngredientId()).getName()+"</td>";
+				out += "<td>"+ri.getPercentMin()+"</td>";
+				out += "<td>"+ri.getPercentMax()+"</td>";
+				out += "</tr>\n";
 			}
-			out += "<th>";
-			if (this.ShowDeletedRequiredIngredient[0] == i && this.ShowDeletedRequiredIngredient[1] == 1){
-				out += "<form action=\"Controller\" method=\"post\" />";
-				out += "deleted ";
-				out += this.getImageAndToolTip(Images.Unvisible);
-				out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+ i +"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"33_dontshowDeletedRequiredIngredients\"/>";
-				out += "</form>";
-			}else{
-				out += "<form action=\"Controller\" method=\"post\" />";
-				out += "deleted ";
-				out += this.getImageAndToolTip(Images.Visible);
-				out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+ i +"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"34_showDeletedRequiredIngredients\"/>";
-				out += "</form>";
-			}
-			out += "</th>";
-			out += "<th>Name</th><th>min %</th><th>max %</th>";
-			
-			out += "<th>";
-			out += "<form action=\"Controller\" method=\"post\" />";
-			if (this.AddRequiredIngredients[1] == 1 && this.AddRequiredIngredients[0] == i){
-				out += this.getImageAndToolTip(Images.Back);
-				out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+ i +"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"35_NoShowRowRequiredIngredientAdding\"/>";
-			}else{
-				out += this.getImageAndToolTip(Images.Add);
-				out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+ i +"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"36_showRowRequiredIngredientAdding\"/>";
-			}
-			out += "</form>";
-			out += "</th>";
-			out += "</tr>\n";
-			for(int j=0; j< this.getNrZutaten(); j++){
-				
-				System.out.println("RequiredFertiliser: " + i + " RequiredIngredient: " + j);
-				if (this.modelData.getIngredients().getIngredient().get(j).isActive() == false){
-					this.setIngredientActive(Integer.toString(j), true);
-				}
-				System.out.println("RequiredIngredients of RequiredFertiliser: " + model.getIdOfRequiredIngredientsFromRequiredFertiliser(fertiliser));
-				if (this.modelData.getIngredients().getIngredient().get(j).isActive() == true &&
-						this.modelData.getIngredients().getIngredient().get(j).getActive() == true &&
-						model.getIdOfRequiredIngredientsFromRequiredFertiliser(fertiliser).contains(j) == true){
-					
-					int index = model.getIndexOfRequiredIngredientFromIngredientId(fertiliser, j);
-					RequiredIngredient requiredIngredient = fertiliser.getRequiredIngredients().getRequiredIngredient().get(index);
-					System.out.println("Status von requiredIngredient: " + requiredIngredient.getActive());
-					
-					if (requiredIngredient.isActive() == false){
-						this.setRequiredIngredientActive(fertiliser, Integer.toString(j), true);
-					}
-					if (requiredIngredient.isActive() == true && 
-							(requiredIngredient.getActive() == true || 
-								(this.ShowDeletedRequiredIngredient[0] == i && 
-								this.ShowDeletedRequiredIngredient[1] == 1
-								)
-							)
-						){
-						out += "<tr>";
-						if (this.showID == true){
-							out += "<td>"+requiredIngredient.getIngredientId()+"</td>";
-						}
-						out += this.getDeleteRequiredIngredientButton(i, index);
-						out += "<td>"+this.modelData.getIngredients().getIngredient().get(requiredIngredient.getIngredientId()).getName()+"</td>";
-						
-						if (i == this.getChangeRequiredFeritliser() && index == model.getIndexOfRequiredIngredientFromIngredientId(fertiliser, this.getChangeRequiredIngredientId())){
-							out += "<form action=\"Controller\" method=\"post\" />";
-							out += "<td><input type=\"text\" name=\"changeIngredientPercentMin\" value=\""+requiredIngredient.getPercentMin()+"\"/></td>";
-							out += "<td><input type=\"text\" name=\"changeIngredientPercentMax\" value=\""+requiredIngredient.getPercentMax()+"\"/></td>";
-							out += "<td>";
-							out += this.getImageAndToolTip(Images.Done);
-							out += "</td>";
-							out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+i+"\"/>";
-							out += "<input type=\"hidden\" name=\"requiredIngredientId\" value=\""+j+"\"/>";
-							out += "<input type=\"hidden\" name=\"action\" value=\"38_saveEditRequiredIngredient\"/>";
-							out += "</form>";
-						}else{
-							out += "<td>"+requiredIngredient.getPercentMin()+"</td>";
-							out += "<td>"+requiredIngredient.getPercentMax()+"</td>";
-							out += "<form action=\"Controller\" method=\"post\" />";
-							out += "</select>";
-							out += "<td>";
-							out += this.getImageAndToolTip(Images.Edit);
-							out += "</td>";
-							out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+i+"\"/>";
-							out += "<input type=\"hidden\" name=\"requiredIngredientId\" value=\""+j+"\"/>";
-							out += "<input type=\"hidden\" name=\"action\" value=\"39_editRequiredIngredient\"/>";
-							out += "</form>";
-						}
-						out += "</tr>\n";
-					}
-				}
-			}
-			
-			if (this.AddRequiredIngredients[1] == 1 && this.AddRequiredIngredients[0] == i){
-				out += this.getRowAddRequiredIngredient(i);
-			}
-			out += "<br>";
 		}
-		out += "</table>\n";
-		return out;
-		
-	}
-	
-	/**
-	 * Dies Funktion gibt die Zeile zurück mit der ein neuer RequiredIngredient hinzugefügt werden kann.
-	 * 
-	 * @param requiredFertiliserId - Integer der Id des RequiredFertiliser
-	 * @return - String der Html Zeile
-	 */
-	private String getRowAddRequiredIngredient(int requiredFertiliserId){
-		String out = "";
-		
-		out += "<form type=\"hidden\" action=\"Controller\" method=\"post\" />";
-		out += "<tr>";
-		if (this.showID == true){
-			out += "<td bgcolor=\"black\"></td>";
-			out += "<td bgcolor=\"black\"></td>";
-		}else if (this.showID == false){
-			out += "<td bgcolor=\"black\"></td>";
-		}
-		out += "<td><select name=\"addRequiredIngredientName\" autofocus >";
-		for( int g=0; g< this.getNrZutaten(); g++ ){
-			if (this.modelData.getIngredients().getIngredient().get(g).getActive() == true){
-				out += "<option>"+this.modelData.getIngredients().getIngredient().get(g).getName()+"</option>";
-			}
-			
-		}
-		out += "</select></td>";
-		out += "<td><input type=\"text\" name=\"addIngredientPercentMin\" /></td>";
-		out += "<td><input type=\"text\" name=\"addIngredientPercentMax\" /></td>";
-		out += "<td>";
-		out += this.getImageAndToolTip(Images.Done);
-		out += "</td>";
-		out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+requiredFertiliserId+"\">";
-		out += "<input type=\"hidden\" name=\"action\" value=\"37_addRequiredIngredient\"/>";
-		out += "</tr>\n";
-		out += "</form>";
-		
+		out += "</table> </div>\n";
 		return out;
 	}
-		
-		/**
-		 * Diese Funktion zeigt je nach Status des RequiredIngredients ein Button zum loeschen oder ein Button zum hinzufuegen.
-		 * Des Weiteren haegt die Darstellung davon, ob die geloeschten RequiredIngredients eingezeigt werden sollen.
-		 * 
-		 * @param requiredFertiliserId - Integer
-		 * @param ingredientIndex - Integer
-		 * @return
-		 */
-		private String getDeleteRequiredIngredientButton(int requiredFertiliserId, int ingredientIndex){
-			String out = "";
-			RequiredFertiliser requiredFertiliser= this.modelData.getRequiredFertiliser().get(requiredFertiliserId);
-			RequiredIngredient requiredIngredient = requiredFertiliser.getRequiredIngredients().getRequiredIngredient().get(ingredientIndex);
-			if (
-				(this.ShowDeletedRequiredIngredient[0] == requiredFertiliserId && this.ShowDeletedRequiredIngredient[1] == 1) && 
-				requiredIngredient.getActive() == false
-				){
-				
-				out += "<form action=\"Controller\" method=\"post\" />";
-				out += "<td>";
-				out += this.getImageAndToolTip(Images.Add);
-				out += "</td>";
-				out += "<input type=\"hidden\" name=\"requiredFertiliserId\" value=\""+requiredFertiliserId+"\"/>";
-				out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+requiredIngredient.getIngredientId()+"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"41_undeleteRequiredIngredients\" />";
-				out += "</form>";
-			}else{
-				out += "<form action=\"Controller\" method=\"post\" />";
-				out += "<td>";
-				out += this.getImageAndToolTip(Images.Delete);
-				out += "</td>";
-				out += "<input type=\"hidden\" name=\"fertiliserId\" value=\""+requiredFertiliserId+"\"/>";
-				out += "<input type=\"hidden\" name=\"ingredientId\" value=\""+requiredIngredient.getIngredientId()+"\"/>";
-				out += "<input type=\"hidden\" name=\"action\" value=\"40_deleteRequiredIngredient\" />";
-				out += "</form>";
-				
-			}
-			
-			return out;
-			
-		}
 	
 	public String getSolutionTableau(){
 		String out = "";
-		out += "<table border=\"1\">\n";
-		out += "<tr><th colspan=\"3\">Loesung</th></tr>\n";
+		out += "<div class=\"container\">";
+		out += "<table border=\"1\" class='table table-bordered' style=' text-align: center;color:white' >\n";
+		out += "<tr><th colspan=\"3\"><u>L�sung</u></th></tr>\n";
 		out += "<tr><th align=\"left\" colspan=\"2\">Solver Status: </th><td colspan=\"1\">"+this.modelData.getSolverStatus()+"</td></tr>\n";
 		
 		if(this.isSolved()){
@@ -1382,7 +892,7 @@ public class EDbean implements Serializable{
 
 						out += "<tr>";
 						out += "<td colspan=\"1\"></td>";
-						out += "<td colspan=\"3\">Zutaten:</td>";
+						out += "<td colspan=\"3\"><u>Zutaten:<u></td>";
 						out += "</tr>\n";
 						for(int k=0; k<usedIngredients.size(); k++){
 							int usedIngredientsId = usedIngredients.get(k).getIngredientIdId();
@@ -1397,7 +907,7 @@ public class EDbean implements Serializable{
 				}
 			}
 		}
-		out += "</table>\n";
+		out += "</table></div>\n";
 		return out;
 	}
 	
@@ -1411,101 +921,17 @@ public class EDbean implements Serializable{
 	 * Es muss die IngredientId und der PresentFertiliser übergeben werden.
 	 * 
 	 * @param presentFertiliser - PresentFertiliser
-	 * @param strPresentIngredientId - String
+	 * @param ingredientId - String
 	 * @param b - boolean
 	 * 
 	 * Autor: Eddi M.
 	 */
-	public void setPresentIngredientActive(PresentFertiliser presentFertiliser, String strPresentIngredientId, boolean b){
-		int presentIngredientId = Integer.parseInt(strPresentIngredientId);
-		
-		this.setPresentIngredientActive(presentFertiliser, presentIngredientId, b);
-	}
-	
-	/**
-	 * Setzt den Status des PresentIngredients auf den boolischen Wert b.
-	 * Es muss die IngredientId und der PresentFertiliser übergeben werden.
-	 * 
-	 * @param presentFertiliser - String
-	 * @param strPresentIngredientId - String
-	 * @param b - boolean
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void setPresentIngredientActive(String strPresentFertiliserId, String strPresentIngredientId, boolean b){
-		int presentFertiliserId = Integer.parseInt(strPresentFertiliserId);
-		int presentIngredientId = Integer.parseInt(strPresentIngredientId);
-		PresentFertiliser presentFertiliser = model.getPresentFertiliser(presentFertiliserId);
-		
-		this.setPresentIngredientActive(presentFertiliser, presentIngredientId, b);
-	}
-	
-	/**
-	 * Setzt den Status des PresentIngredients auf den boolischen Wert b.
-	 * Es muss die IngredientId und der PresentFertiliser übergeben werden.
-	 * 
-	 * @param presentFertiliser - PresentFertiliser
-	 * @param strPresentIngredientId - Integer
-	 * @param b - boolean
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void setPresentIngredientActive(PresentFertiliser presentFertiliser, int presentIngredientId, boolean b){
-		int index = model.getIndexOfPresentIngredientFromIngredientId(presentFertiliser, presentIngredientId);
+	public void setPresentIngredientActive(PresentFertiliser presentFertiliser, String ingredientId, boolean b){
+		int index, id = Integer.parseInt(ingredientId);
+		index = model.getIndexOfPresentIngredientFromIngredientId(presentFertiliser, id);
 		PresentIngredient presentIngredient = presentFertiliser.getPresentIngredients().getPresentIngredient().get(index);
 		
 		model.setPresentIngredientActive(presentIngredient, b);
-	}
-	
-	/**
-	 * Setzt den Status des RequiredIngredients auf den boolischen Wert b.
-	 * Es muss die IngredientId und der RequiredFertiliser übergeben werden.
-	 * 
-	 * @param requiredFertiliser - RequiredFertiliser
-	 * @param strRequiredIngredientId - String
-	 * @param b - boolean
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void setRequiredIngredientActive(RequiredFertiliser requiredFertiliser, String strRequiredIngredientId, boolean b){
-		int requiredIngredientId = Integer.parseInt(strRequiredIngredientId);
-		
-		this.setRequiredIngredientActive(requiredFertiliser, requiredIngredientId, b);
-	}
-	
-	/**
-	 * Setzt den Status des RequiredIngredients auf den boolischen Wert b.
-	 * Es muss die IngredientId und der RequiredFertiliser übergeben werden.
-	 * 
-	 * @param requiredFertiliser - String
-	 * @param strRequiredIngredientId - String
-	 * @param b - boolean
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void setRequiredIngredientActive(String strRequiredFertiliserId, String strRequiredIngredientId, boolean b){
-		int requiredFertiliserId = Integer.parseInt(strRequiredFertiliserId);
-		int requiredIngredientId = Integer.parseInt(strRequiredIngredientId);
-		RequiredFertiliser requiredFertiliser = model.getRequiredFertiliser(requiredFertiliserId);
-		
-		this.setRequiredIngredientActive(requiredFertiliser, requiredIngredientId, b);
-	}
-	
-	/**
-	 * Setzt den Status des RequiredIngredients auf den boolischen Wert b.
-	 * Es muss die IngredientId und der RequiredFertiliser übergeben werden.
-	 * 
-	 * @param requiredFertiliser - RequiredFertiliser
-	 * @param strRequiredIngredientId - Integer
-	 * @param b - boolean
-	 * 
-	 * Autor: Eddi M.
-	 */
-	public void setRequiredIngredientActive(RequiredFertiliser requiredFertiliser, int requiredIngredientId, boolean b){
-		int index = model.getIndexOfRequiredIngredientFromIngredientId(requiredFertiliser, requiredIngredientId);
-		RequiredIngredient requiredIngredient = requiredFertiliser.getRequiredIngredients().getRequiredIngredient().get(index);
-		
-		model.setRequiredIngredientActive(requiredIngredient, b);
 	}
 	
 	public String getHiddenModdelId(){
@@ -1519,20 +945,33 @@ public class EDbean implements Serializable{
 	 * @return
 	 */
 	public String getModelsOverview(){
-		String[] ids = Model.getModelIds();
-		String out = "";
-		out += "<table border=\"1\">\n";
-		out += "<tr><th>Id</th><th>Name</th><th colspan=\"3\">Model Management</th></tr>\n";
+		String[] ids 	= Model.getModelIds();
+		String out 		= "";
+		out += "<div class=\"container\">";
+		out += "<table border=\"1\" class='table table-bordered' style=' text-align: center;color:white' >\n";
+		out += "<tr><th>ID</th><th>Name</th><th colspan=\"3\">Model Management</th></tr>\n";
 		for(int i=0; i<ids.length; i++){
+			String right 	= GetUserRightInModel(ids[i],getNutzer());
+			if(!GetUserInModel(ids[i],getNutzer())) {
+				out += "<!---";
+			}
 			String refModel = "Controller?action=03_showModel&modelId="+ids[i];
 			out += "<tr><td>"+ids[i]+"</td>";
-			out += "<td><a href=\""+refModel+"\">"+Model.get(ids[i]).getModelData().getName()+"</a></td>";
+			out += "<td><button class='btn btn-xs btn-warning' onclick='window.location.href=\""+refModel+"\"'>"+Model.get(ids[i]).getModelData().getName()+"</button></td>";
 			refModel = "Controller?action=15_removeModel&modelId="+ids[i];
-			out += "<td><a href=\""+refModel+"\">delete</a></td>\n";
+			if(right.equals("x")) {
+				out += "<td><button class='btn btn-xs btn-danger' onclick='window.location.href=\""+refModel+"\"'>Delete</button></td>\n";
+			}else {
+				out += "<td><button class='btn btn-xs btn-danger' onclick='window.location.href=\""+refModel+"\"' disabled>Delete</button></td>\n";
+			}
 			refModel = "Controller?action=11_saveModel&modelId="+ids[i];
-			out += "<td><a href=\""+refModel+"\">save</a></td></tr>\n";
+			out += "<td><button class='btn btn-xs btn-success' onclick='window.location.href=\""+refModel+"\"'>Save</button></td></tr>\n";
+			if(!GetUserInModel(ids[i],nutzer)) {
+				out += "-->";
+			}
 		}
 		out += "</table>\n";
+		out += "</div>";
 		return out;
 	}
 	
@@ -1543,14 +982,16 @@ public class EDbean implements Serializable{
 	 */
 	public String getModelAddView(){
 		String out = "";
-		out	+= "<table border=\"1\">\n";
+		out += "<div class=\"container\">";
+		out += "<table border=\"1\" class='table table-bordered' style=' text-align: center;color:white' >\n";
 		//out += "<tr><th colspan=\"4\">Add a Model</th></tr>";
-		out += "<tr><th>Model Id</th><th>Model Name</th></tr>";
+		out += "<tr><th>Model ID</th><th>Model Name</th></tr>";
 		out += "<tr>";
 		out += "<td><input type=\"text\" name=\"modelId\" size=\"10\" ></td>";
 		out += "<td><input type=\"text\" name=\"modelName\" size=\"10\" ></td>";
 		out += "</tr>";
 		out	+= "</table>\n";
+		out += "</div>";
 		return out;
 	}
 	
@@ -1733,7 +1174,7 @@ public class EDbean implements Serializable{
 
 	
 	/**
-	 * fügt ein neues Modell hinzu
+	 * fuegt ein neues Modell hinzu
 	 * 
 	 * @param modelId
 	 * @param ModelName
@@ -1770,6 +1211,180 @@ public class EDbean implements Serializable{
 			logger.error("Cmplservice nicht erreichbar "+EDbean.WebService);
 		}
 		return ok;
+	}
+	
+	/*
+	 * Nutzermanagement
+	 */
+	
+	public String getUserOverview() {
+		String out = "";
+		String modelId = model.getId();
+		out += "<div class=\"container\">";
+		out += "<table border=\"1\" class='table table-bordered' style=' text-align: center;color:white' >\n";
+		out += "<tr><th>Name</th><th>Rechte</th></tr>\n";
+		if(checkIfModelIsInFile(modelId)) {
+			String[] FileLineArray 	= allLineUserFile();
+			String lineModel		= FileLineArray[linefile].split("/")[1];
+			String[] lineModelUser	= lineModel.split(";");
+			for(int x = 0; x < lineModelUser.length;x++) {
+				String[] lineUser = lineModelUser[x].split("-");
+				out += "<tr><td>"+lineUser[0]+"</td><td>"+lineUser[1]+"</td></tr>";
+			}
+		}
+		out += "</table>";
+		return out;
+	}
+	
+	public void saveRightModelNew(String modelId, String nutzer, String rechte) {
+		String[] modelFile			= allLineUserFile();
+		String str					= modelId+"/"+nutzer+"-"+rechte+";";
+		BufferedWriter outputWriter = null;
+		  try {
+			outputWriter = new BufferedWriter(new FileWriter(filepath));
+			for (int i = 0; i < modelFile.length; i++) {
+			    // Maybe:
+			    outputWriter.write(modelFile[i]);
+			    outputWriter.newLine();
+			  }
+			  outputWriter.write(str);
+			  outputWriter.flush();  
+			  outputWriter.close();  
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveRightModel(String modelId, String nutzer, String rechte) {
+		String modelLine	= writeModelRightLine(modelId, nutzer, rechte);
+		String[] modelFile	= getLineArray();
+		modelFile[linefile]	= modelLine;
+		BufferedWriter outputWriter = null;
+		  try {
+			outputWriter = new BufferedWriter(new FileWriter(filepath));
+			for (int i = 0; i < modelFile.length; i++) {
+			    // Maybe:
+			    outputWriter.write(modelFile[i]);
+			    outputWriter.newLine();
+			  }
+			  outputWriter.flush();  
+			  outputWriter.close();  
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
+	}
+	
+	private String writeModelRightLine(String modelId, String nutzer, String rechte) {
+		String lineModelUserRights	= modelId+"|";
+		if(f.exists() && !f.isDirectory() && checkIfModelIsInFile(modelId)) {
+			String[] FileLineArray 	= allLineUserFile();
+			String lineModel		= FileLineArray[linefile];
+			String[] lineModelUser	= lineModel.split(";");
+			for(int x = 0; x < lineModelUser.length;x++) {
+				String[] lineUserRight = lineModelUser[x].split("-");
+				if(lineUserRight[0].equalsIgnoreCase(nutzer)) {
+					lineModelUserRights += nutzer+"-"+rechte+";";
+				}else {
+					lineModelUserRights += lineModelUser[x]+";";
+				}
+			}
+		}else{
+			logger.error("Error at writeModelRightLine");
+		}
+		return lineModelUserRights;
+	}
+	
+	public boolean GetUserInModel(String modelId, String nutzer) {
+		boolean checker	= false;
+		if(checkIfModelIsInFile(modelId)) {
+			String[] FileLineArray 	= allLineUserFile();
+			String lineModel		= FileLineArray[linefile].split("/")[1];
+			String[] lineModelUser	= lineModel.split(";");
+			for(int x = 0; x < lineModelUser.length;x++) {
+				String[] lineUser = lineModelUser[x].split("-");
+				System.out.println(lineUser[1]);
+				if(lineUser[0].equalsIgnoreCase(nutzer)) {
+					checker = true;
+				}
+			}
+		}
+		System.out.println("GetUserInModel("+modelId+" - "+nutzer+"): " + checker);
+		return checker;
+	}
+	
+	public String GetUserRightInModel(String modelId, String nutzer) {
+		String userRight		= "";
+		if(checkIfModelIsInFile(modelId)) {
+			String[] FileLineArray 	= allLineUserFile();
+			String lineModel		= FileLineArray[linefile].split("/")[1];
+			String[] lineModelUser	= lineModel.split(";");
+			for(int x = 0; x < lineModelUser.length;x++) {
+				String[] lineUser = lineModelUser[x].split("-");
+				if(lineUser[0].equalsIgnoreCase(nutzer)) {
+					userRight = lineUser[1];
+				}
+			}
+		}
+		System.out.println("GetUserRightInModel("+modelId+" - "+nutzer+"): " + userRight);
+		return userRight;
+	}
+	
+	private boolean checkIfModelIsInFile(String modelId) {
+		boolean checker	= false;
+		String[] FileLineArray = allLineUserFile();
+		String[] LineSplitter;
+		for(int x = 0; x < FileLineArray.length;x++) {
+			LineSplitter = FileLineArray[x].split("/");
+			if(LineSplitter[0].equalsIgnoreCase(modelId)) {
+				checker = true;
+				linefile=x;
+			}
+		}
+		System.out.println("checkIfModelIsInFile("+modelId+"): " + checker);
+		return checker;
+	}
+	
+	public String[] getLineArray() {
+		return LineArray;
+	}
 
+	public void setLineArray(String[] lineArray) {
+		LineArray = lineArray;
+	}
+
+	private String[] allLineUserFile() {
+		int linenumber 		= 0;
+		String[] FileArray 	= null;
+		try{
+    		if(f.exists()){
+    		    FileReader fr = new FileReader(f);
+    		    LineNumberReader lnr = new LineNumberReader(fr);
+    		    
+	            while (lnr.readLine() != null){
+	            	linenumber++;
+	            }
+    	        lnr.close();
+    		}else{
+    			logger.error("User Model File does not exist");
+    		}
+
+			FileArray = new String[linenumber];
+			String line;
+			int counter = 0;
+			
+			FileReader fileReader = new FileReader(f);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				FileArray[counter] = line;
+				counter++;
+			}
+			bufferedReader.close();
+			fileReader.close();
+		}catch(IOException e){
+    		e.printStackTrace();
+    	}
+		setLineArray(FileArray);
+		return FileArray;
+		
 	}
 }
