@@ -51,6 +51,7 @@
 				<element ref="tns:presentIngredients" minOccurs="1" maxOccurs="1" />
 			</sequence>
 			<attribute name="id" type="int" use="required"/>
+			<attribute name="active" type="boolean" default="true"/>
 		</complexType>
 	</element>
 
@@ -63,6 +64,7 @@
 				<element ref="tns:requiredIngredients" minOccurs="1" maxOccurs="1" />
 			</sequence>
 			<attribute name="id" type="int" use="required"/>
+			<attribute name="active" type="boolean" default="true"/>
 		</complexType>
 	</element>
 
@@ -86,6 +88,7 @@
 				<element name="percentMin" type="double" minOccurs="1" maxOccurs="1" />
 				<element name="percentMax" type="double" minOccurs="1" maxOccurs="1" />
 			</sequence>
+			<attribute name="active" type="boolean" default="true"/>
 		</complexType>
 	</element>
 	
