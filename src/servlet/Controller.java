@@ -22,11 +22,12 @@ import org.apache.log4j.PropertyConfigurator;
 import bean.EDbean;
 
 /**
- * Das Controller Servlet nimmt die Nutzer Eingaben entgegen 
- * und gibt die Eingaben an die Bean zur Bearbeitung der 
- * Sachlogik weiter. Fuer die Ausgabe wird der Request an
+ * Das Controller Servlet nimmt die Nutzereingaben entgegen 
+ * und gibt die Werte an die EDbean zur Bearbeitung der 
+ * Sachlogik weiter. Fuer die Ausgabe wird die Request an
  * eine geeignete jsp weitergereicht. 
- *
+ * 
+ *@autor: Eddi M.
  */
 @WebServlet("/Controller")
  public class Controller extends javax.servlet.http.HttpServlet implements javax.servlet.Servlet {
@@ -131,7 +132,7 @@ import bean.EDbean;
 			String name = request.getParameter("addIngredientName");
 			String price = request.getParameter("addIngredientPrice");
 			String unit = request.getParameter("addIngredientUnit");
-			model.addIngredient(name, price, unit);
+			model.addOrChangeIngredient(name, price, unit);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
@@ -154,10 +155,10 @@ import bean.EDbean;
 			dispacher.forward(request, response);
 		}
 		else if(action.equals("07_saveEditIngredient")){
-			String ingredientId = request.getParameter("ingredientId");
+			String ingredientName = request.getParameter("ingredientName");
 			String price = request.getParameter("addIngredientPrice");
 			String unit = request.getParameter("addIngredientUnit");
-			model.changeIngredient(ingredientId, price, unit);
+			model.addOrChangeIngredient(ingredientName, price, unit);
 			model.setChangeIngredientId(-1);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
@@ -206,6 +207,7 @@ import bean.EDbean;
 			String modelId = request.getParameter("modelId");
 			String modelName = request.getParameter("modelName");
 			model.addModel(modelId, modelName);
+			model.saveRightModelNew(modelId, model.getNutzer(), "x");
 			target = "02_selectModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
@@ -381,6 +383,27 @@ import bean.EDbean;
 			String strRequiredFertiliserId = request.getParameter("requiredFertiliserId");
 			String strRequiredIngredientId = request.getParameter("ingredientId");
 			model.setRequiredIngredientActive(strRequiredFertiliserId, strRequiredIngredientId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("42_addPresentFertiliser")){
+			String name = request.getParameter("fertiliserName");
+			String amount = request.getParameter("fertiliserAmount");
+			String unit = request.getParameter("fertiliserUnit");
+			model.addOrChangePresentFertiliser(name, amount, unit);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("43_showRowAddingPresentFertiliser")){
+			model.setAddPresentFertiliser(true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("44_NoShowRowAddingPresentFertiliser")){
+			model.setAddPresentFertiliser(false);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);

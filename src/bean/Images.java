@@ -3,7 +3,7 @@ package bean;
 import java.io.File;
 
 /**
- * Diese Klasse ermoeglicht den Programmierer schnell und nach belieben die Icons auszutauschen.
+ * Diese Klasse ermoeglicht den Programmierer schnell und nach belieben die Icons/Bilder auszutauschen.
  * Die icons werden von der Klasse EDBean in die Html Tags implementiert.
  * 
  * @author Eddi M.
@@ -15,7 +15,7 @@ public enum Images {
 	Add("Icons" + File.separator + "ic_add_black_36dp" + File.separator + "web" + File.separator + "ic_add_black_36dp_1x.png", "hinzufuegen", "Hinzufuegen"),
 	Delete("Icons" + File.separator + "ic_delete_black_36dp" + File.separator + "web" + File.separator + "ic_delete_black_36dp_1x.png", "loeschen", "Loeschen"),
 	Visible("Icons" + File.separator + "ic_visibility_black_36dp" + File.separator + "web" + File.separator + "ic_visibility_black_36dp_1x.png", "sichtbar", "Die geloeschten Objekte anschauen"),
-	Unvisible("Icons" + File.separator + "ic_visibility_off_black_36dp" + File.separator + "web" + File.separator + "ic_visibility_off_black_36dp_1x.png", "unsichtbar", "Nur die ungeloeschten Objekte sehen"),
+	Invisible("Icons" + File.separator + "ic_visibility_off_black_36dp" + File.separator + "web" + File.separator + "ic_visibility_off_black_36dp_1x.png", "unsichtbar", "Nur die ungeloeschten Objekte sehen"),
 	Back("Icons" + File.separator + "ic_keyboard_backspace_black_36dp" + File.separator + "web" + File.separator + "ic_keyboard_backspace_black_36dp_1x.png", "einklappen", "einklappen"),
 	FillUp("Icons" + File.separator + "ic_timelapse_black_36dp" + File.separator + "web" + File.separator + "ic_timelapse_black_36dp_1x.png", "auf 100 % rechnen", "auf 100 % rechnen");
 	
