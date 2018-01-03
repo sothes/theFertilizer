@@ -7,20 +7,15 @@
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" ></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" ></script>
-<table width="100%" border="0">
-<tr valign="middle">
-<th align="left">
-Datum: <jsp:getProperty name="ed" property="datum" /><br/> 
-Nutzer: <jsp:getProperty name="ed" property="nutzer" />
+<body background="bg.jpeg" style="background-size: cover">
+<span style="font-family: 'Arial Black'; color: white;">
+Aktuelles Datum: <jsp:getProperty name="ed" property="datum" /><br/> 
+Dein Nutzername: <jsp:getProperty name="ed" property="nutzer" />
+</span>
 <form action="Controller" method="post">
 	<input type="hidden" name="action" value="00_Abmelden" />
-	<input type="submit" value="abmelden" />
+	<input type="submit" class="btn btn-m btn-info " value="abmelden" />
 </form>
-</th>
-<th><h2>Fertiliser</h2></th>
-<th>
-<img src="logo.gif" style="float:right;align:top">
-</th>
-</tr>
-</table>
+<h1 style="text-align:center; font-family: 'Arial Black'; color: Black;">Fertiliser</h1>
+</body>
 <!-- End: 00_inc.jsp -->
