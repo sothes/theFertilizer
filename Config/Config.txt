@@ -1,0 +1,10 @@
+#Die folgende Datei ist zum Configurieren des Fertilisers da.
+
+#Bitte tragen sie die Url des Webservers ein.
+WebService=http://194.95.45.70:8008
+
+#Bitte vermerken Sie das absolute Verzeichnis in dem die ModellDateien gespeichert werden.
+ModelDir=/Users/Max/Documents/workspace/Fertiliser_0.2/testDir/
+
+#Bitte vermerken Sie das absolute Verzeichnis des cmplModels.
+CmplModel=/Users/Max/Documents/workspace/Fertiliser_0.2/cmpl/Fertilizer.cmpl
