@@ -1,5 +1,6 @@
 package servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
@@ -21,11 +22,12 @@ import org.apache.log4j.PropertyConfigurator;
 import bean.EDbean;
 
 /**
- * Das Controller Servlet nimmt die Nutzer Eingaben entgegen 
- * und gibt die Eingaben an die Bean zur Bearbeitung der 
- * Sachlogik weiter. Fuer die Ausgabe wird der Request an
+ * Das Controller Servlet nimmt die Nutzereingaben entgegen 
+ * und gibt die Werte an die EDbean zur Bearbeitung der 
+ * Sachlogik weiter. Fuer die Ausgabe wird die Request an
  * eine geeignete jsp weitergereicht. 
- *
+ * 
+ *@autor: Eddi M.
  */
 @WebServlet("/Controller")
  public class Controller extends javax.servlet.http.HttpServlet implements javax.servlet.Servlet {
@@ -130,7 +132,7 @@ import bean.EDbean;
 			String name = request.getParameter("addIngredientName");
 			String price = request.getParameter("addIngredientPrice");
 			String unit = request.getParameter("addIngredientUnit");
-			model.addIngredient(name, price, unit);
+			model.addOrChangeIngredient(name, price, unit);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
@@ -139,14 +141,13 @@ import bean.EDbean;
 			String id = request.getParameter("presetFertiliserId");
 			String name = request.getParameter("addPresentIngredientName");
 			String percent = request.getParameter("addIngredientPercent");
-			model.addOrChangePresentIngredient(id , name, percent);
+			model.addOrChangePresentIngredientViaName(id , name, percent);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
 		}
 		else if(action.equals("06_editIngredient")){
 			String ingredientId = request.getParameter("ingredientId");
-			System.out.println(ingredientId);
 			int id = Integer.parseInt(ingredientId);
 			model.setChangeIngredientId(id);
 			target = "03_showModel.jsp";
@@ -154,11 +155,10 @@ import bean.EDbean;
 			dispacher.forward(request, response);
 		}
 		else if(action.equals("07_saveEditIngredient")){
-			String ingredientId = request.getParameter("ingredientId");
+			String ingredientName = request.getParameter("ingredientName");
 			String price = request.getParameter("addIngredientPrice");
 			String unit = request.getParameter("addIngredientUnit");
-			System.out.println("Id: " + ingredientId + " Price: "+ price + " unit: "+ unit);
-			model.changeIngredient(ingredientId, price, unit);
+			model.addOrChangeIngredient(ingredientName, price, unit);
 			model.setChangeIngredientId(-1);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
@@ -167,9 +167,7 @@ import bean.EDbean;
 		else if(action.equals("08_editPresentIngredient")){
 			String fertiliserId = request.getParameter("presentFertiliserId");
 			String ingredientId = request.getParameter("presentIngredientId");
-			System.out.println("FertiliserId: " + fertiliserId + " IngredientId: " + ingredientId);
-			model.setChangePresentIngredientId(ingredientId);
-			model.setChangePresentFertiliser(fertiliserId);
+			model.setChangePresentIngredientId(fertiliserId, ingredientId);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
@@ -178,10 +176,8 @@ import bean.EDbean;
 			String fertiliserId = request.getParameter("presentFertiliserId");
 			String ingredientId = request.getParameter("presentIngredientId");
 			String percent = request.getParameter("changeIngredientPercent");
-			System.out.println("FertiliserId: " + fertiliserId + " IngredientId: "+ ingredientId + " Percent: "+ percent);
-			model.addOrChangePresentIngredient(fertiliserId, ingredientId, percent);
-			model.setChangePresentIngredientId("-1");
-			model.setChangePresentFertiliser("-1");
+			model.addOrChangePresentIngredientViaId(fertiliserId, ingredientId, percent);
+			model.setChangePresentIngredientId("-1", "-1");
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
@@ -235,7 +231,6 @@ import bean.EDbean;
 		}
 		else if(action.equals("22_deleteIngredients")){
 			String ingredientId = request.getParameter("ingredientId");
-			System.out.println("You are going to delete the Ingredients: " + ingredientId);
 			model.setIngredientActive(ingredientId, false);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
@@ -277,25 +272,257 @@ import bean.EDbean;
 		else if(action.equals("28_deletePresentIngredient")){
 			String fertiliserId = request.getParameter("fertiliserId");
 			String ingredientId = request.getParameter("ingredientId");
-			//System.out.println("You are going to delete the PresentIngredients: " + ingredientId);
+			System.out.println("You are going to delete the PresentIngredients: " + ingredientId + " in dem Fertiliser: " + fertiliserId);
+			model.setPresentIngredientActive(fertiliserId, ingredientId, false);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);
 			dispacher.forward(request, response);
 		}
-		else if(action.equals("29_AddUserToModel")){
+		else if(action.equals("29_dontshowDeletedPresentIngredients")){
+			String fertiliserId = request.getParameter("presentFertiliserId");
+			model.setShowDeletedPresentIngredient(fertiliserId, false);
+			System.out.println("You are going to dontshowDeletedPresentIngredients");
+//			model.setPresentIngredientActive(fertiliserId, ingredientId, false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("30_showDeletedPresentIngredients")){
+			String fertiliserId = request.getParameter("presentFertiliserId");
+			System.out.println("You are going to showDeletedPresentIngredients");
+			model.setShowDeletedPresentIngredient(fertiliserId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("31_undeletePresentIngredients")){
+			String strPresentFertiliserId = request.getParameter("presentFertiliserId");
+			String strPresentIngredientId = request.getParameter("ingredientId");
+			model.setPresentIngredientActive(strPresentFertiliserId, strPresentIngredientId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("32_aktualisierePercentOfPresentIngredients")){
+			String strPresentFertiliserId = request.getParameter("presentFertiliserId");
+			model.aktualisierePercent(strPresentFertiliserId);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("33_dontshowDeletedRequiredIngredients")){
+			String fertiliserId = request.getParameter("requiredFertiliserId");
+			model.setShowDeletedRequiredIngredient(fertiliserId, false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("34_showDeletedRequiredIngredients")){
+			String fertiliserId = request.getParameter("requiredFertiliserId");
+			model.setShowDeletedRequiredIngredient(fertiliserId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("35_NoShowRowRequiredIngredientAdding")){
+			String fertiliserId = request.getParameter("requiredFertiliserId");
+			model.setAddRequiredIngredients(fertiliserId, false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("36_showRowRequiredIngredientAdding")){
+			String fertiliserId = request.getParameter("requiredFertiliserId");
+			model.setAddRequiredIngredients(fertiliserId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("37_addRequiredIngredient")){
+			String id = request.getParameter("requiredFertiliserId");
+			String name = request.getParameter("addRequiredIngredientName");
+			String percentMin = request.getParameter("addIngredientPercentMin");
+			String percentMax = request.getParameter("addIngredientPercentMax");
+			model.addOrChangeRequiredIngredientViaName(id, name, percentMin, percentMax);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("38_saveEditRequiredIngredient")){
+			String fertiliserId = request.getParameter("requiredFertiliserId");
+			String ingredientId = request.getParameter("requiredIngredientId");
+			String percentMin = request.getParameter("changeIngredientPercentMin");
+			String percentMax = request.getParameter("changeIngredientPercentMax");
+			model.addOrChangeRequiredIngredientViaId(fertiliserId, ingredientId, percentMin, percentMax);
+			model.setChangeRequiredIngredientId("-1", "-1");
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("39_editRequiredIngredient")){
+			String fertiliserId = request.getParameter("requiredFertiliserId");
+			String ingredientId = request.getParameter("requiredIngredientId");
+			model.setChangeRequiredIngredientId(fertiliserId, ingredientId);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("40_deleteRequiredIngredient")){
+			String fertiliserId = request.getParameter("fertiliserId");
+			String ingredientId = request.getParameter("ingredientId");
+			model.setRequiredIngredientActive(fertiliserId, ingredientId, false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("41_undeleteRequiredIngredients")){
+			String strRequiredFertiliserId = request.getParameter("requiredFertiliserId");
+			String strRequiredIngredientId = request.getParameter("ingredientId");
+			model.setRequiredIngredientActive(strRequiredFertiliserId, strRequiredIngredientId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("42_addPresentFertiliser")){
+			String name = request.getParameter("fertiliserName");
+			String amount = request.getParameter("fertiliserAmount");
+			String unit = request.getParameter("fertiliserUnit");
+			model.addOrChangePresentFertiliser(name, amount, unit);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("43_showRowAddingPresentFertiliser")){
+			model.setAddPresentFertiliser(true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("44_NoShowRowAddingPresentFertiliser")){
+			model.setAddPresentFertiliser(false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("45_editPresentFertiliser")){
+			String fertiliserId = request.getParameter("fertiliserId");
+			model.setChangePresentFertiliser(fertiliserId);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("46_saveEditPresentFertiliser")){
+			String fertiliserName = request.getParameter("fertiliserName");
+			String amount = request.getParameter("fertiliserAmount");
+			String unit = request.getParameter("fertiliserUnit");
+			model.addOrChangePresentFertiliser(fertiliserName, amount, unit);
+			model.setChangePresentFertiliser("-1");
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("47_showDeletedPresentFertilisers")){
+			model.setShowDeletedPresentFertiliser(true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("48_dontshowDeletedPresentFertilisers")){
+			model.setShowDeletedPresentFertiliser(false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("49_deletePresentFertilisers")){
+			String fertiliserId = request.getParameter("fertiliserId");
+			model.setPresentFertiliserActive(fertiliserId, false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("50_undeletePresentFertilisers")){
+			String Str_fertiliserId = request.getParameter("fertiliserId");
+			model.setPresentFertiliserActive(Str_fertiliserId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("51_addRequiredFertiliser")){
+			String name = request.getParameter("fertiliserName");
+			String amount = request.getParameter("fertiliserAmount");
+			String unit = request.getParameter("fertiliserUnit");
+			model.addOrChangeRequiredFertiliser(name, amount, unit);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("52_showRowAddingRequiredFertiliser")){
+			model.setAddRequiredFertiliser(true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("53_NoShowRowAddingRequiredFertiliser")){
+			model.setAddRequiredFertiliser(false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("54_editRequiredFertiliser")){
+			String fertiliserId = request.getParameter("fertiliserId");
+			model.setChangeRequiredFertiliser(fertiliserId);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("55_saveEditRequiredFertiliser")){
+			String fertiliserName = request.getParameter("fertiliserName");
+			String amount = request.getParameter("fertiliserAmount");
+			String unit = request.getParameter("fertiliserUnit");
+			model.addOrChangeRequiredFertiliser(fertiliserName, amount, unit);
+			model.setChangeRequiredFertiliser("-1");
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("56_showDeletedRequiredFertilisers")){
+			model.setShowDeletedRequiredFertiliser(true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("57_dontshowDeletedRequiredFertilisers")){
+			model.setShowDeletedRequiredFertiliser(false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("58_deleteRequiredFertilisers")){
+			String fertiliserId = request.getParameter("fertiliserId");
+			model.setRequiredFertiliserActive(fertiliserId, false);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("59_undeleteRequiredFertilisers")){
+			String Str_fertiliserId = request.getParameter("fertiliserId");
+			model.setRequiredFertiliserActive(Str_fertiliserId, true);
+			target = "03_showModel.jsp";
+			dispacher = request.getRequestDispatcher(target);
+			dispacher.forward(request, response);
+		}
+		else if(action.equals("60_AddUserToModel")){
 			String modelId 			= model.getId();
 			String user				= request.getParameter("user");
 			String rechte			= request.getParameter("rights");
-			
 			model.saveRightModel(modelId, user, rechte);
-			target = "03_showModel.jsp";
-			dispacher = request.getRequestDispatcher(target);
-			dispacher.forward(request, response);
-		}
+ 			target = "03_showModel.jsp";
+ 			dispacher = request.getRequestDispatcher(target);
+ 			dispacher.forward(request, response);
+ 		}
 		else if(action.equals("30_DeleteUserModel")){
 			String modelId 			= model.getId();
-			String user				= request.getParameter("user");
-			
+			String user				= request.getParameter("user");		
 			model.deleteUserOfModel(modelId, user);
 			target = "03_showModel.jsp";
 			dispacher = request.getRequestDispatcher(target);

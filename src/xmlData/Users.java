@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.example.org/Fertiliser}ingredient" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://www.example.org/Fertiliser}User" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,40 +38,41 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "ingredient"
+    "user"
 })
-@XmlRootElement(name = "ingredients")
-public class Ingredients {
+@XmlRootElement(name = "Users")
+public class Users {
 
-    protected List<Ingredient> ingredient;
+    @XmlElement(name = "User")
+    protected List<User> user;
 
     /**
-     * Gets the value of the ingredient property.
+     * Gets the value of the user property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ingredient property.
+     * This is why there is not a <CODE>set</CODE> method for the user property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getIngredient().add(newItem);
+     *    getUser().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Ingredient }
+     * {@link User }
      * 
      * 
      */
-    public List<Ingredient> getIngredient() {
-        if (ingredient == null) {
-            ingredient = new ArrayList<Ingredient>();
+    public List<User> getUser() {
+        if (user == null) {
+            user = new ArrayList<User>();
         }
-        return this.ingredient;
+        return this.user;
     }
 
 }

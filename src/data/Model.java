@@ -33,6 +33,7 @@ import xmlData.RequiredFertiliser;
 import xmlData.RequiredIngredient;
 import xmlData.Solution;
 import xmlData.Units;
+import xmlData.User;
 
 /**
  * Diese Klasse speichert und liest alle Modelldaten ein/aus 
@@ -216,13 +217,15 @@ public class Model {
 		RequiredFertiliser 	requiredFertiliser;
 		PresentIngredient	presentIngredient;
 		RequiredIngredient	requiredIngredient;
-
+		User user = this.factory.createUser();
+			user.setName("Eddi M.");
+			user.setUserId(1);
 		
 		this.modelData 	= factory.createFertiliser();
 		this.modelData.setId(mid);
 		this.modelData.setName(mid);
 		this.modelData.setCreatedAt(this.getTime());
-		this.modelData.setAutor("Eddi Miller");
+		this.modelData.setUser(user);
 		this.modelData.setDescription("Mischduenger");
 		this.modelData.setSolved(false);
 		this.modelData.setSolverStatus("unsolved");
@@ -379,6 +382,28 @@ public class Model {
 	}
 	
 	/**
+	 * Setzt den Status von PresentFertiliser auf den boolischen Wert b.
+	 * 
+	 * @param fertiliser - PresentFertiliser
+	 * @param b - Boolean
+	 * @autor: Eddi M.
+	 */
+	public void setPresentFertiliserActive(PresentFertiliser fertiliser, boolean b){
+		fertiliser.setActive(b);
+	}
+	
+	/**
+	 * Setzt den Status von RequiredFertiliser auf den boolischen Wert b.
+	 * 
+	 * @param fertiliser - RequiredFertiliser
+	 * @param b - Boolean
+	 * @autor: Eddi M.
+	 */
+	public void setRequiredFertiliserActive(RequiredFertiliser fertiliser, boolean b){
+		fertiliser.setActive(b);
+	}
+	
+	/**
 	 * Diese Funktion gibt den entsprechenden PresentFertiliser anhand seiner Id zurueck.
 	 * 
 	 * @param id - Id des PresentFertilisers
@@ -392,50 +417,6 @@ public class Model {
 		return presentFertiliser;
 	}
 
-	/**
-	 * Erstellt ein PresentFertiliser und speichert alle im zugeordneten PresentIngredients ab.
-	 * 
-	 * @param id
-	 * @param name
-	 * @param amount
-	 * @param unit
-	 * @param presentIngredients
-	 */
-	public void addPresentFertiliser(int id, String name, double amount, Units unit, ArrayList<PresentIngredient> presentIngredients){
-		PresentFertiliser presentFertiliser = this.createPresentFertiliser(id, name, amount, unit);
-		
-		presentFertiliser.setPresentIngredients(factory.createPresentIngredients());
-		
-		Iterator<PresentIngredient> iter = presentIngredients.iterator();
-		while(iter.hasNext()){
-			addPresentIngredient(presentFertiliser, iter.next());
-		}
-		
-		this.modelData.getPresentFertiliser().add(presentFertiliser);
-	}
-	
-	/**
-	 * Erstellt ein PresentFertiliser und speichert es in der xml-Datei ab.
-	 * 
-	 * @param id - Integer
-	 * @param name - String
-	 * @param amount - double
-	 * @param unit - Units
-	 * @autor: Eddi M.
-	 */
-	public void addPresentFertiliser(int id, String name, double amount, Units unit){
-		System.out.println("addPresentFertiliserModel");
-		System.out.println("id: " + id + " name: " + name + " amount: " + amount);
-		PresentFertiliser presentFertiliser = this.createPresentFertiliser(id, name, amount, unit);
-		
-		this.modelData.getPresentFertiliser().add(presentFertiliser);
-		if (this.printDoc() == true){
-			System.out.println("Der Fertiliser wurde angelegt.");
-		}else {
-			System.out.println("Du bist am Arsch");
-		}
-	}
-	
 	/**
 	 * Diese Funktion gibt die PresentFertiliserId als Integer zurueck. Eingabewert ist der Name des PresentFertiliser als String.
 	 * Wurde keine PresentFertiliserId fuer den Namen gefunden wird -1 zurueck gegeben.
@@ -468,6 +449,84 @@ public class Model {
 			listId.add(modelData.getPresentFertiliser().get(i).getId());
 		}
 		return listId;
+	}
+	
+	/**
+	 * Diese Funktion gibt die RequiredFertiliserId als Integer zurueck. Eingabewert ist der Name des RequiredFertiliser als String.
+	 * Wurde keine RequiredFertiliserId fuer den Namen gefunden wird -1 zurueck gegeben.
+	 * 
+	 * @param name - String
+	 * @return - Integer
+	 * @autor: Eddi M.
+	 */
+	public int getIdOfRequiredFertiliserFromRequiredFertiliserName(String name){
+		int result = -1;
+		for (int i=0; i<this.modelData.getRequiredFertiliser().size(); i++){
+			
+			if (this.modelData.getRequiredFertiliser().get(i).getName().equals(name)){
+				result = this.modelData.getRequiredFertiliser().get(i).getId();
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gibt eine Liste der RequiredFertiliserIds wieder.
+	 * 
+	 * @return - Zurueck gegeben wird eine ArrayListe mit allen Ids gespeichert als Integer.
+	 */
+	public ArrayList<Integer> getIdsOfRequiredFertilisers(){
+		ArrayList<Integer> listId = new ArrayList<Integer>();
+		
+		for (int i=0; i < modelData.getRequiredFertiliser().size(); i++){
+			listId.add(modelData.getRequiredFertiliser().get(i).getId());
+		}
+		return listId;
+	}
+
+	/**
+	 * Erstellt ein PresentFertiliser und speichert alle im zugeordneten PresentIngredients ab.
+	 * 
+	 * @param id
+	 * @param name
+	 * @param amount
+	 * @param unit
+	 * @param presentIngredients
+	 */
+	public void addPresentFertiliser(int id, String name, double amount, Units unit, ArrayList<PresentIngredient> presentIngredients){
+		PresentFertiliser presentFertiliser = this.createPresentFertiliser(id, name, amount, unit);
+		
+		presentFertiliser.setPresentIngredients(factory.createPresentIngredients());
+		
+		Iterator<PresentIngredient> iter = presentIngredients.iterator();
+		while(iter.hasNext()){
+			addPresentIngredient(presentFertiliser, iter.next());
+		}
+		
+		this.modelData.getPresentFertiliser().add(presentFertiliser);
+	}
+
+	/**
+	 * Erstellt ein PresentFertiliser und speichert es in der xml-Datei ab.
+	 * 
+	 * @param id - Integer
+	 * @param name - String
+	 * @param amount - double
+	 * @param unit - Units
+	 * @autor: Eddi M.
+	 */
+	public void addPresentFertiliser(int id, String name, double amount, Units unit){
+		System.out.println("addPresentFertiliserModel");
+		System.out.println("id: " + id + " name: " + name + " amount: " + amount);
+		PresentFertiliser presentFertiliser = this.createPresentFertiliser(id, name, amount, unit);
+		
+		this.modelData.getPresentFertiliser().add(presentFertiliser);
+		if (this.printDoc() == true){
+			System.out.println("Der Fertiliser wurde angelegt.");
+		}else {
+			System.out.println("Du bist am Arsch");
+		}
 	}
 
 	/**
@@ -521,18 +580,86 @@ public class Model {
 		presentIngredient = this.modelData.getPresentFertiliser().get(fId).getPresentIngredients().getPresentIngredient().get(presentIngredientIndex);
 		return presentIngredient;
 	}
+	
+	/**
+	 * Erstellt ein RequiredFertiliser und speichert alle im zugeordneten RequiredIngredients ab.
+	 * 
+	 * @param id
+	 * @param name
+	 * @param amount
+	 * @param unit
+	 * @param requiredIngredients
+	 */
+	public void addRequiredFertiliser(int id, String name, double amount, Units unit, ArrayList<RequiredIngredient> requiredIngredients){
+		RequiredFertiliser requiredFertiliser = this.createRequiredFertiliser(id, name, amount, unit);
+		
+		requiredFertiliser.setRequiredIngredients(factory.createRequiredIngredients());
+		
+		Iterator<RequiredIngredient> iter = requiredIngredients.iterator();
+		while(iter.hasNext()){
+			addRequiredIngredient(requiredFertiliser, iter.next());
+		}
+		
+		this.modelData.getRequiredFertiliser().add(requiredFertiliser);
+	}
 
 	/**
-	 * Erstellt ein PresentIngredient und Speichert es unter dem mitgegebenden PresentFertiliser ab.
+	 * Erstellt ein RequiredFertiliser und speichert es in der xml-Datei ab.
 	 * 
-	 * @param presentFertiliser - PresentFertiliser
 	 * @param id - Integer
-	 * @param percent - double
+	 * @param name - String
+	 * @param amount - double
+	 * @param unit - Units
 	 * @autor: Eddi M.
 	 */
-	private void addPresentIngredient(PresentFertiliser presentFertiliser, int id, double percent){
-		PresentIngredient presentIngredient = createPresentIngredient(id, percent);
-		this.addPresentIngredient(presentFertiliser, presentIngredient);
+	public void addRequiredFertiliser(int id, String name, double amount, Units unit){
+		System.out.println("addRequiredFertiliserModel");
+		System.out.println("id: " + id + " name: " + name + " amount: " + amount);
+		RequiredFertiliser requiredFertiliser = this.createRequiredFertiliser(id, name, amount, unit);
+		
+		this.modelData.getRequiredFertiliser().add(requiredFertiliser);
+		if (this.printDoc() == true){
+			System.out.println("Der Fertiliser wurde angelegt.");
+		}else {
+			System.out.println("Du bist am Arsch");
+		}
+	}
+
+	/**
+	 * Speichert die Aenderung von RequiredFertiliser ab.
+	 * 
+	 * @param requiredFertiliser - RequiredFertiliser
+	 * @param amount - double
+	 * @param unit - Unit
+	 * @autor: Eddi M.
+	 */
+	public void changeRequiredFertiliser(RequiredFertiliser requiredFertiliser, double amount, Units unit){
+		requiredFertiliser.setAmount(amount);
+		requiredFertiliser.setUnit(unit);
+	}
+	
+	/**
+	 * Erstellt ein Element vom Typ Ingredient, welches zurueck gegeben wird.
+	 * 
+	 * @param id - Integer
+	 * @param name - String
+	 * @param price - double
+	 * @param unit - Units
+	 * @return - Ingredient
+	 * @autor: Eddi M.
+	 */
+	private RequiredFertiliser createRequiredFertiliser(int id, String name, double amount, Units unit){
+		RequiredFertiliser requiredFertiliser;
+		
+		requiredFertiliser = factory.createRequiredFertiliser();
+		requiredFertiliser.setId(id);
+		requiredFertiliser.setName(name);
+		requiredFertiliser.setUnit(unit);
+		requiredFertiliser.setAmount(amount);
+		requiredFertiliser.setActive(true);
+		requiredFertiliser.setRequiredIngredients(factory.createRequiredIngredients());
+		
+		return requiredFertiliser;
 	}
 
 	/**
@@ -558,6 +685,7 @@ public class Model {
 	 */
 	private void addPresentIngredient(PresentFertiliser presentFertiliser, PresentIngredient presentIngredient){
 		presentFertiliser.getPresentIngredients().getPresentIngredient().add(presentIngredient);
+		presentFertiliser.setHasPresentIngredients(true);
 	}
 
 	public void changePresentIngredient(int presentFertiliserId, int ingredientIndex, double percent){
@@ -599,7 +727,7 @@ public class Model {
 	public ArrayList<Integer> getIdsOfPresentIngredientsFromPresentFertiliser(PresentFertiliser presentFertiliser){
 		ArrayList<Integer> listId = new ArrayList<Integer>();
 		
-		if (presentFertiliser.hatPresentIngredients() == true){
+		if (presentFertiliser.isHasPresentIngredients() == true){
 			for (int i=0; i < presentFertiliser.getPresentIngredients().getPresentIngredient().size(); i++){
 				int ingredientId = presentFertiliser.getPresentIngredients().getPresentIngredient().get(i).getIngredientId();
 				listId.add(ingredientId);
@@ -790,34 +918,6 @@ public class Model {
 		requiredFertiliser = this.modelData.getRequiredFertiliser().get(id);
 		return requiredFertiliser;
 	}
-
-	/**
-	 * Erstellt ein RequiredFertiliser und speichert im zugeordnete RequiredIngredients ab.
-	 * 
-	 * @param id
-	 * @param name
-	 * @param amount
-	 * @param unit
-	 * @param requiredIngredients
-	 */
-	public void addRequiredFertiliser(int id, String name, double amount, Units unit, ArrayList<RequiredIngredient> requiredIngredients){
-		RequiredFertiliser requiredFertiliser;
-		
-		requiredFertiliser = factory.createRequiredFertiliser();
-		requiredFertiliser.setId(id);
-		requiredFertiliser.setName(name);
-		requiredFertiliser.setAmount(amount);
-		requiredFertiliser.setUnit(unit);
-		requiredFertiliser.setRequiredIngredients(factory.createRequiredIngredients());
-		
-		Iterator<RequiredIngredient> iter = requiredIngredients.iterator();
-		while(iter.hasNext()){
-			addRequiredIngredient(requiredFertiliser, iter.next());
-		}
-		
-		this.modelData.getRequiredFertiliser().add(requiredFertiliser);
-	}
-	
 	
 	/**
 	 * zu Test Zwecken
