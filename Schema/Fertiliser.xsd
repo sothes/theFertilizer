@@ -4,7 +4,8 @@
 		<complexType>
 			<sequence>
 				<element name="name" type="token" minOccurs="1" maxOccurs="1" />
-				<element name="autor" type="token" minOccurs="1" maxOccurs="1" />
+				<element ref="tns:User" minOccurs="1" maxOccurs="1" />
+				<element ref="tns:Users" minOccurs="1" maxOccurs="1" />
 				<element name="description" type="token" minOccurs="1" maxOccurs="1" />
 				<element ref="tns:ingredients" minOccurs="1" maxOccurs="1" />
 				<element ref="tns:presentFertiliser" minOccurs="1" maxOccurs="unbounded" />
@@ -15,6 +16,23 @@
 			<attribute name="createdAt" type="token" use="optional" />
 			<attribute name="solved" type="boolean" use="required" />
 			<attribute name="solverStatus" type="token" use="optional" />
+		</complexType>
+	</element>
+	
+	<element name="Users">
+		<complexType>
+			<sequence>
+				<element ref="tns:User" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="User">
+		<complexType>
+			<sequence>
+				<element name="userId" type="int" minOccurs="1" maxOccurs="1" />
+				<element name="name" type="token" minOccurs="1" maxOccurs="1" />
+			</sequence>
 		</complexType>
 	</element>
 	
@@ -52,6 +70,7 @@
 			</sequence>
 			<attribute name="id" type="int" use="required"/>
 			<attribute name="active" type="boolean" default="true"/>
+			<attribute name="hasPresentIngredients" type="boolean" default="false"/>
 		</complexType>
 	</element>
 
@@ -67,9 +86,6 @@
 			<attribute name="active" type="boolean" default="true"/>
 		</complexType>
 	</element>
-
-
-
 
 	<element name="presentIngredient">
 		<complexType>
@@ -149,4 +165,8 @@
 			<enumeration value="KG" />
 		</restriction>
 	</simpleType>
+
+
+
+	
 </schema>
