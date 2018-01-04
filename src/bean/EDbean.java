@@ -1487,6 +1487,13 @@ public class EDbean implements Serializable{
 		return FileArray;
 	}
 	
+	/*
+	 * Loescht ein User auf dem Modell
+	 * 
+	 * @param modelId Model ID
+	 * @param nutzer Benutzer
+	 */
+	
 	public void deleteUserOfModel(String modelId, String nutzer) {
 		String lineModelUserRights	= modelId+"/";
 		
